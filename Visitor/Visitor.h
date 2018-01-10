@@ -1,0 +1,9 @@
+#ifndef OOPPROJECT_IVISITOR_H
+#define OOPPROJECT_IVISITOR_H
+
+
+class Visitor {
+};
+
+
+#endif //OOPPROJECT_IVISITOR_H

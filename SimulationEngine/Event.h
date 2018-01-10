@@ -1,8 +1,8 @@
 #ifndef OOPPROJECT_EVENT_H
 #define OOPPROJECT_EVENT_H
 
-#include "types.h"
-#include "Interfaces.h"
+#include "../Utils/types.h"
+#include "../Utils/Interfaces.h"
 
 class Event {
 

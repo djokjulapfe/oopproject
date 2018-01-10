@@ -1,0 +1,10 @@
+#ifndef OOPPROJECT_EXPRESSION_H
+#define OOPPROJECT_EXPRESSION_H
+
+
+class Expression {
+
+};
+
+
+#endif //OOPPROJECT_EXPRESSION_H

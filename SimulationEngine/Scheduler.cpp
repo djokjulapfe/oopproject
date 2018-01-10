@@ -21,7 +21,7 @@ void Scheduler::put(Event *ev) {
 	if (nxt) nxt->setTime(nxt->getTime() - time);
 	ev->setTime(time);
 	ev->setNext(nxt);
-	if (prv != 0) prv->setNext(ev); else first = ev;
+	if (prv != nullptr) prv->setNext(ev); else first = ev;
 }
 
 Time Scheduler::getCurTime() const {
