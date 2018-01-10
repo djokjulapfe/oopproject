@@ -20,6 +20,8 @@ public:
 
 	void setTime(Time time);
 
+	Time getStartTime() const;
+
 	void setNext(Event *next);
 
 protected:
@@ -31,6 +33,8 @@ private:
 	ID id;
 
 	Time time;
+
+	Time startTime;
 
 	Event *next;
 

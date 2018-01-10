@@ -6,11 +6,11 @@
 
 class AddOperation : public ArithmeticOperation {
 public:
+	AddOperation();
+
 	void process() override;
 
 	void accept(Visitor *visitor) override;
-
-	void notify(ID id) override;
 };
 
 

@@ -14,7 +14,6 @@ Token::Token() {
 	producedBy = nullptr;
 }
 
-Token::Token(double value) : value(value) {
-	name = "Unnamed Token";
+Token::Token(double value, Text name) : value(value), name(name) {
 	producedBy = nullptr;
 }

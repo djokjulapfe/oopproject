@@ -17,6 +17,8 @@ public:
 
 	virtual bool processNow();
 
+	virtual void clear();
+
 protected:
 
 	Scheduler();

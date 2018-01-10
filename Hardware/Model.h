@@ -7,15 +7,18 @@
 class Model {
 public:
 
-	~Model();
+	~Model() = default;
 
 	static Model *Instance();
 
-	virtual void add(Operation *operation);
+	//virtual void add(Operation *operation);
 
-	virtual void remove(Operation *operation);
+	//virtual void remove(Operation *operation);
 
-	virtual void clear();
+	//virtual void clear();
+
+	Time Ts, Tm, Te, Mw, Mr;
+	size_t Nw, Nr;
 
 protected:
 
@@ -24,7 +27,7 @@ protected:
 
 private:
 
-	std::vector<Operation *> operations;
+	//std::vector<Operation *> operations;
 };
 
 

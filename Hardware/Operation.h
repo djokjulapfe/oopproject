@@ -10,6 +10,8 @@ class Operation : public ITimedOperation {
 
 public:
 
+	~Operation();
+
 	void notify(ID id) override = 0;
 
 	virtual void accept(Visitor *visitor) = 0;
@@ -25,11 +27,18 @@ public:
 
 	void setDescription(const Text &description);
 
+	virtual void addTarget(size_t idx, Operation *operation);
+
+	// TODO: implement this
+	//virtual void removeTarget(Operation *operation);
+
 	virtual void acceptToken(size_t idx, Token *token);
 
 	virtual bool allTokensAccepted();
 
 	virtual void send();
+
+	Time opTime;
 
 protected:
 
@@ -38,6 +47,9 @@ protected:
 	std::vector<Token *> inputPorts;
 
 	Token *result;
+
+	std::vector<std::pair<size_t, Operation *>> targets;
+
 
 private:
 
@@ -49,12 +61,7 @@ private:
 
 	Text description;
 
-	Operation *target;
-
-	size_t targetIdx;
-
 	friend void test1();
-
 };
 
 

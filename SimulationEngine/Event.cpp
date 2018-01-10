@@ -4,6 +4,7 @@
 Event::Event(ITimedOperation *targetOperation, Time tm, ID id)
 		: id(id), time(tm), next(nullptr), target(targetOperation) {
 	Scheduler::Instance()->put(this);
+	startTime = Scheduler::Instance()->getCurTime();
 }
 
 void Event::create(ITimedOperation *timedOperation, Time tm, ID id) {
@@ -32,4 +33,8 @@ void Event::setTime(Time time) {
 
 void Event::setNext(Event *next) {
 	Event::next = next;
+}
+
+Time Event::getStartTime() const {
+	return startTime;
 }

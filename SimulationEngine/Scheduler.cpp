@@ -1,5 +1,7 @@
+#include <iostream>
 #include "Scheduler.h"
 #include "Event.h"
+#include "../Hardware/Operation.h"
 
 Scheduler *Scheduler::Instance() {
 	static Scheduler instance;
@@ -21,7 +23,8 @@ void Scheduler::put(Event *ev) {
 	if (nxt) nxt->setTime(nxt->getTime() - time);
 	ev->setTime(time);
 	ev->setNext(nxt);
-	if (prv != nullptr) prv->setNext(ev); else first = ev;
+	if (prv != nullptr) prv->setNext(ev);
+	else first = ev;
 }
 
 Time Scheduler::getCurTime() const {
@@ -39,10 +42,24 @@ bool Scheduler::processOneEvent() {
 	ITimedOperation *el = ev->getTarget();
 	if (el) el->notify(ev->getId());
 	delete ev;
-	return (first && first->getTime() == 0);
+	return (first != nullptr);
 }
 
 bool Scheduler::processNow() {
-	while (processOneEvent());
+	do {
+		if (first) {
+			std::cout << ((Operation *) first->getTarget())->getName() << ": ";
+		}
+			std::cout << first->getStartTime() << "/" << curTime + first->getTime() << "\n";
+	} while (processOneEvent());
 	return (first != nullptr);
+}
+
+void Scheduler::clear() {
+	Event *tevent = first;
+	while (first) {
+		delete tevent;
+		first = first->getNext();
+		tevent = first;
+	}
 }

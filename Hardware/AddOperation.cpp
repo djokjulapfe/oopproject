@@ -1,4 +1,5 @@
 #include "AddOperation.h"
+#include "Model.h"
 
 void AddOperation::process() {
 	delete result;
@@ -7,9 +8,9 @@ void AddOperation::process() {
 }
 
 void AddOperation::accept(Visitor *visitor) {
-
+	// TODO: implement this
 }
 
-void AddOperation::notify(ID id) {
-
+AddOperation::AddOperation() : ArithmeticOperation() {
+	opTime = Model::Instance()->Ts;
 }
