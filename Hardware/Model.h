@@ -17,6 +17,8 @@ public:
 
 	//virtual void clear();
 
+	//virtual Operation *findByName(Text name);
+
 	Time Ts, Tm, Te, Mw, Mr;
 	size_t Nw, Nr;
 

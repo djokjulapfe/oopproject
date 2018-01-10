@@ -3,6 +3,7 @@
 
 
 #include "../Utils/Interfaces.h"
+#include <memory>
 class Visitor;
 class Token;
 
@@ -32,7 +33,7 @@ public:
 	// TODO: implement this
 	//virtual void removeTarget(Operation *operation);
 
-	virtual void acceptToken(size_t idx, Token *token);
+	virtual void acceptToken(size_t idx, std::shared_ptr<Token> token);
 
 	virtual bool allTokensAccepted();
 
@@ -44,9 +45,9 @@ protected:
 
 	explicit Operation(size_t inputPortSize);
 
-	std::vector<Token *> inputPorts;
+	std::vector<std::shared_ptr<Token>> inputPorts;
 
-	Token *result;
+	std::shared_ptr<Token> result;
 
 	std::vector<std::pair<size_t, Operation *>> targets;
 

@@ -9,7 +9,7 @@ class Token {
 
 public:
 
-	Token(double value, Text name = "Unnamed Token");
+	explicit Token(double value, Text name = "Unnamed Token");
 
 	Token();
 

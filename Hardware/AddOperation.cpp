@@ -2,8 +2,7 @@
 #include "Model.h"
 
 void AddOperation::process() {
-	delete result;
-	result = new Token;
+	result = std::make_shared<Token>();
 	result->setValue(inputPorts[0]->getValue() + inputPorts[1]->getValue());
 }
 

@@ -1,19 +1,13 @@
+#include <iostream>
+#include <utility>
 #include "Operation.h"
 #include "Token.h"
 #include "../SimulationEngine/Event.h"
 
 Operation::~Operation() {
-	for (auto &inputPort : inputPorts) {
-		delete inputPort;
-		inputPort = nullptr;
-	}
 	for (auto &&target : targets) {
-		auto &targetPort = target.second->inputPorts[target.first];
-		if (targetPort) {
-			targetPort = nullptr;
-		}
+		target.second->inputPorts[target.first] = nullptr;
 	}
-	//delete result;
 }
 
 ID Operation::maxId = 0;
@@ -34,8 +28,7 @@ void Operation::setDescription(const Text &description) {
 	Operation::description = description;
 }
 
-void Operation::acceptToken(size_t idx, Token *token) {
-	delete inputPorts[idx];
+void Operation::acceptToken(size_t idx, std::shared_ptr<Token> token) {
 	inputPorts[idx] = token;
 	if (allTokensAccepted()) {
 		Event::create(this, opTime);
@@ -45,7 +38,6 @@ void Operation::acceptToken(size_t idx, Token *token) {
 void Operation::send() {
 
 	for (int i = 0; i < inputPorts.size(); ++i) {
-		delete inputPorts[i];
 		inputPorts[i] = nullptr;
 	}
 

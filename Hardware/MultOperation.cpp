@@ -2,8 +2,7 @@
 #include "Model.h"
 
 void MultOperation::process() {
-	delete result;
-	result = new Token;
+	result = std::shared_ptr<Token>();
 	result->setValue(inputPorts[0]->getValue() * inputPorts[1]->getValue());
 }
 

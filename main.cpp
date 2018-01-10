@@ -48,13 +48,11 @@ void test1() {
 	add1->addTarget(0, add3);
 	add2->addTarget(1, add3);
 	add2->addTarget(0, add4);
-	add1->acceptToken(0, new Token(1, "op11"));
-	add1->acceptToken(1, new Token(2, "op12"));
-	add2->acceptToken(0, new Token(3, "op21"));
-	add2->acceptToken(1, new Token(4, "op22"));
-	add4->acceptToken(1, new Token(-5, "op32"));
-	//Event::create(add1, add1->opTime);
-	//Event::create(add2, add1->opTime);
+	add1->acceptToken(0, std::make_shared<Token>(1, "op11"));
+	add1->acceptToken(1, std::make_shared<Token>(2, "op12"));
+	add2->acceptToken(0, std::make_shared<Token>(3, "op21"));
+	add2->acceptToken(1, std::make_shared<Token>(4, "op22"));
+	add4->acceptToken(1, std::make_shared<Token>(-5, "op32"));
 	Scheduler::Instance()->processNow();
 	if (add3->result) std::cout << add3->result->value << std::endl;
 	else std::cout << "Value not yet calculated\n";
