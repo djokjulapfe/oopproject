@@ -58,8 +58,8 @@ bool Scheduler::processNow() {
 void Scheduler::clear() {
 	Event *tevent = first;
 	while (first) {
-		delete tevent;
 		first = first->getNext();
+		delete tevent;
 		tevent = first;
 	}
 }

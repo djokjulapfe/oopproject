@@ -17,3 +17,11 @@ Token::Token() {
 Token::Token(double value, Text name) : value(value), name(name) {
 	producedBy = nullptr;
 }
+
+const Text &Token::getName() const {
+	return name;
+}
+
+void Token::setName(const Text &name) {
+	Token::name = name;
+}

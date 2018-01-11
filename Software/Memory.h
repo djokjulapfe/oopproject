@@ -2,8 +2,24 @@
 #define OOPPROJECT_MEMORY_H
 
 
-class Memory {
+#include <map>
+#include "../Utils/types.h"
 
+class Memory {
+public:
+
+	static Memory *Instance();
+
+	virtual void set(Text varName, double val);
+
+	virtual double get(Text varName);
+
+protected:
+
+	Memory() = default;
+
+private:
+	std::map<Text, double> mem;
 };
 
 

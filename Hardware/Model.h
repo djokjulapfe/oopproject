@@ -7,17 +7,21 @@
 class Model {
 public:
 
-	~Model() = default;
+	~Model();
 
 	static Model *Instance();
 
-	//virtual void add(Operation *operation);
+	static Operation *operation(const Text &name);
 
-	//virtual void remove(Operation *operation);
+	virtual void add(Operation *operation);
 
-	//virtual void clear();
+	virtual void remove(Operation *operation);
 
-	//virtual Operation *findByName(Text name);
+	virtual void clear();
+
+	virtual Operation *findByName(const Text &name);
+
+	// TODO: make a create method
 
 	Time Ts, Tm, Te, Mw, Mr;
 	size_t Nw, Nr;
@@ -29,7 +33,7 @@ protected:
 
 private:
 
-	//std::vector<Operation *> operations;
+	std::vector<Operation *> operations;
 };
 
 

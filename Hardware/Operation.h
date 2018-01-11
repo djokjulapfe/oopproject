@@ -11,9 +11,9 @@ class Operation : public ITimedOperation {
 
 public:
 
-	~Operation();
+	~Operation() = default;
 
-	void notify(ID id) override = 0;
+	void notify(ID id) override;
 
 	virtual void accept(Visitor *visitor) = 0;
 
@@ -43,12 +43,13 @@ public:
 
 protected:
 
-	explicit Operation(size_t inputPortSize);
+	explicit Operation(size_t inputPortSize, Text name = "Unnamed Operation");
 
 	std::vector<std::shared_ptr<Token>> inputPorts;
 
 	std::shared_ptr<Token> result;
 
+	// TODO: try using weak_ptr instead of *
 	std::vector<std::pair<size_t, Operation *>> targets;
 
 

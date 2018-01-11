@@ -6,10 +6,11 @@
 #include "Token.h"
 
 class ArithmeticOperation : public Operation {
-public:
-	ArithmeticOperation();
 
-	void notify(ID id) override;
+protected:
+
+	ArithmeticOperation(Text name = "Arithmetic Operation");
+
 };
 
 

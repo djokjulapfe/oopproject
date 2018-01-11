@@ -15,6 +15,10 @@ public:
 
 	double getValue() const;
 
+	const Text &getName() const;
+
+	void setName(const Text &name);
+
 	void setValue(double value);
 
 private:

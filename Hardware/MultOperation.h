@@ -5,12 +5,15 @@
 #include "ArithmeticOperation.h"
 
 class MultOperation : public ArithmeticOperation {
+
 public:
-	MultOperation();
 
 	void process() override;
 
 	void accept(Visitor *visitor) override;
+
+	MultOperation(Text name = "Multiply Operation");
+
 };
 
 

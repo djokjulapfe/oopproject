@@ -3,12 +3,7 @@
 #include "Operation.h"
 #include "Token.h"
 #include "../SimulationEngine/Event.h"
-
-Operation::~Operation() {
-	for (auto &&target : targets) {
-		target.second->inputPorts[target.first] = nullptr;
-	}
-}
+#include "Model.h"
 
 ID Operation::maxId = 0;
 
@@ -60,10 +55,15 @@ void Operation::addTarget(size_t idx, Operation *operation) {
 	targets.emplace_back(idx, operation);
 }
 
-Operation::Operation(size_t inputPortSize)
-		: inputPorts(inputPortSize, nullptr) {
+Operation::Operation(size_t inputPortSize, Text name)
+		: inputPorts(inputPortSize, std::shared_ptr<Token>()), name(name) {
 	id = maxId;
 	maxId++;
-	name = "Unnamed Operation";
 	result = nullptr;
+	Model::Instance()->add(this);
+}
+
+void Operation::notify(ID id) {
+	process(); // create result
+	send(); // send the result to target
 }
