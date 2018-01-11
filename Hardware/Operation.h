@@ -39,8 +39,6 @@ public:
 
 	virtual void send();
 
-	Time opTime;
-
 protected:
 
 	// TODO: add operation ID to ctor

@@ -4,6 +4,7 @@
 #include "Token.h"
 #include "../SimulationEngine/Event.h"
 #include "Model.h"
+#include "../Software/Machine.h"
 
 ID Operation::maxId = 0;
 
@@ -61,9 +62,12 @@ Operation::Operation(size_t inputPortSize, Text name)
 	maxId++;
 	result = nullptr;
 	Model::Instance()->add(this);
+	Machine::Instance()->addOp(this);
 }
 
 void Operation::notify(ID id) {
 	process(); // create result
+	Machine::Instance()->toCompleted(this);
+	// TODO: move this to Machine
 	send(); // send the result to target
 }

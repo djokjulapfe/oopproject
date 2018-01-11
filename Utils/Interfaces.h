@@ -9,6 +9,10 @@ public:
 
 	virtual void notify(ID id) = 0;
 
+	Time opTime;
+
+	Time startTime;
+
 };
 
 #endif //OOPPROJECT_INTERFACES_H

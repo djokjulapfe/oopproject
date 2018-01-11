@@ -4,8 +4,17 @@
 #include "SimulationEngine/SimulationEngine.h"
 #include "Hardware/MultOperation.h"
 #include "Hardware/MemoryWriteOperation.h"
-#include "Hardware/Model.h"
 #include "Hardware/ExpOperation.h"
+#include "Software/Machine.h"
+
+void initNewTest() {
+
+	Machine::Instance()->clear();
+	Model::Instance()->clear();
+	Scheduler::Instance()->clear();
+	Memory::Instance()->clear();
+
+}
 
 void test1() {
 	new AddOperation("addop");
@@ -14,8 +23,7 @@ void test1() {
 	Model::operation("addop")->notify(0);
 	std::cout << Model::operation("addop")->result->value << std::endl;
 
-	Model::Instance()->clear();
-	Scheduler::Instance()->clear();
+	initNewTest();
 
 	Operation *add1 = new AddOperation("add1");
 	Operation *add2 = new AddOperation("add2");
@@ -32,8 +40,7 @@ void test1() {
 	if (add3->result) std::cout << add3->result->value << std::endl;
 	else std::cout << "Value not yet calculated\n";
 
-	Model::Instance()->clear();
-	Scheduler::Instance()->clear();
+	initNewTest();
 
 	Operation *memwr = new MemoryWriteOperation;
 	add1 = new AddOperation;
@@ -68,19 +75,16 @@ void test1() {
 	else std::cout << "Value not yet calculated\n";
 	if (add4->result) std::cout << add4->result->value << std::endl;
 	else std::cout << "Value not yet calculated\n";
-
-	Model::Instance()->clear();
-	Scheduler::Instance()->clear();
 }
 
 void test2() {
-
-	Memory::Instance()->clear();
-
 	// Testing the code given in "prilog" section
-	new MemoryWriteOperation("x"); // = 2
+
+	initNewTest();
+
 
 	//1
+	new MemoryWriteOperation("x"); // = 2
 	Model::operation("x")->acceptToken(0, std::make_shared<Token>(2, "x"));
 
 	//2
@@ -142,12 +146,26 @@ void test2() {
 
 	Scheduler::Instance()->processNow();
 
-	std::cout << Memory::Instance()->get("z") << std::endl;
-	std::cout << Memory::Instance()->get("d") << std::endl;
+	Memory::Instance()->printMemory();
+}
+
+void test3() {
+	initNewTest();
+	Machine::Instance()->readProgram("../programs/prilogProgram.imf");
+	Machine::Instance()->execute();
+	Machine::Instance()->printLog();
+	Memory::Instance()->printMemory();
 }
 
 int main() {
+	std::cout << "\n------------TEST1------------\n\n";
 	test1();
+	std::cout << "\n------------TEST2------------\n\n";
 	test2();
+	std::cout << "\n------------TEST3------------\n\n";
+	test3();
+//	int x = 2;
+//	int y = 3;
+//	std::cout << "OUT OF TESTS: " << x*x*x*(2+y*y*y*x*x) + 5<< std::endl;
 	return 0;
 }

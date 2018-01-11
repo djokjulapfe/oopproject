@@ -1,4 +1,5 @@
 #include <climits>
+#include <iostream>
 #include "Memory.h"
 #include "../Hardware/MemoryOperation.h"
 
@@ -64,6 +65,13 @@ void Memory::clear() {
 	for (auto &&readingThread : readingThreads) {
 		readingThread.busyUntil = 0;
 		while (!readingThread.ops.empty()) readingThread.ops.pop();
+	}
+	mem.clear();
+}
+
+void Memory::printMemory() {
+	for (auto &&item : mem) {
+		std::cout << item.first << " = " << item.second << std::endl;
 	}
 }
 

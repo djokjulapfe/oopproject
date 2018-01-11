@@ -20,6 +20,8 @@ public:
 
 	virtual void clear();
 
+	virtual void printMemory();
+
 	// time until the memory is busy
 	virtual Time writeFreeIn();
 

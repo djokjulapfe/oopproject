@@ -46,13 +46,7 @@ bool Scheduler::processOneEvent() {
 }
 
 bool Scheduler::processNow() {
-	do {
-		if (first) {
-			std::cout << ((Operation *) first->getTarget())->getName() << ": ";
-		}
-		std::cout << first->getStartTime() << "/";
-		std::cout << curTime + first->getTime() << "\n";
-	} while (processOneEvent());
+	while (processOneEvent());
 	return (first != nullptr);
 }
 

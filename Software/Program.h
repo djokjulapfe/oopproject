@@ -2,8 +2,10 @@
 #define OOPPROJECT_PROGRAM_H
 
 
-class Program {
+#include "../Utils/types.h"
 
+class Program {
+	virtual void readProgram(Text programPath);
 };
 
 
