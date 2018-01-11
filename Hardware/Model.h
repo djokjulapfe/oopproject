@@ -11,6 +11,9 @@ public:
 
 	static Model *Instance();
 
+	// TODO: implement this
+	//virtual void setParameters(std::string fileDir);
+
 	static Operation *operation(const Text &name);
 
 	virtual void add(Operation *operation);
@@ -20,8 +23,6 @@ public:
 	virtual void clear();
 
 	virtual Operation *findByName(const Text &name);
-
-	// TODO: make a create method
 
 	Time Ts, Tm, Te, Mw, Mr;
 	size_t Nw, Nr;

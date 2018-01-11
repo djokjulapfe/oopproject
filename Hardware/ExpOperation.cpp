@@ -1,10 +1,10 @@
 #include "ExpOperation.h"
 #include "Model.h"
-
+#include <cmath>
 
 void ExpOperation::process() {
 	result = std::make_shared<Token>();
-	result->setValue(inputPorts[0]->getValue() + inputPorts[1]->getValue());
+	result->setValue(std::pow(inputPorts[0]->getValue(), inputPorts[1]->getValue()));
 }
 
 void ExpOperation::accept(Visitor *visitor) {
@@ -12,5 +12,5 @@ void ExpOperation::accept(Visitor *visitor) {
 }
 
 ExpOperation::ExpOperation(Text text) : ArithmeticOperation(text) {
-	opTime = Model::Instance()->Ts;
+	opTime = Model::Instance()->Te;
 }

@@ -43,6 +43,7 @@ public:
 
 protected:
 
+	// TODO: add operation ID to ctor
 	explicit Operation(size_t inputPortSize, Text name = "Unnamed Operation");
 
 	std::vector<std::shared_ptr<Token>> inputPorts;

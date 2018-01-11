@@ -7,9 +7,15 @@
 
 class MemoryOperation : public Operation {
 
+public:
+
+	Memory::Thread *owningThread;
+
 protected:
 
-	MemoryOperation(Text name = "Memory Operation");
+	explicit MemoryOperation(Text name = "Memory Operation");
+
+	// TODO: add MemoryReadOperation
 
 };
 

@@ -18,8 +18,8 @@ Model::Model() {
 	Te = 15;
 	Mw = 20;
 	Mr = 15;
-	Nw = 2;
-	Nr = 1;
+	Nw = 1;
+	Nr = 2;
 }
 
 void Model::add(Operation *operation) {

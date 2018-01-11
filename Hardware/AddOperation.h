@@ -12,7 +12,7 @@ public:
 
 	void accept(Visitor *visitor) override;
 
-	AddOperation(Text name = "Add Operation");
+	explicit AddOperation(Text name = "Add Operation");
 
 };
 

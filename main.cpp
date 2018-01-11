@@ -5,9 +5,10 @@
 #include "Hardware/MultOperation.h"
 #include "Hardware/MemoryWriteOperation.h"
 #include "Hardware/Model.h"
+#include "Hardware/ExpOperation.h"
 
 void test1() {
-	Operation *addop = new AddOperation("addop");
+	new AddOperation("addop");
 	Model::operation("addop")->acceptToken(0, std::make_shared<Token>(3));
 	Model::operation("addop")->acceptToken(1, std::make_shared<Token>(2));
 	Model::operation("addop")->notify(0);
@@ -34,28 +35,28 @@ void test1() {
 	Model::Instance()->clear();
 	Scheduler::Instance()->clear();
 
+	Operation *memwr = new MemoryWriteOperation;
 	add1 = new AddOperation;
 	add2 = new MultOperation;
 	add3 = new AddOperation;
 	Operation *add4 = new MultOperation;
-	Operation *memwr = new MemoryWriteOperation;
 
+	memwr->setName("memwr1");
 	add1->setName("A1");
 	add2->setName("M1");
 	add3->setName("A2");
 	add4->setName("M2");
-	memwr->setName("memwr1");
 
+	memwr->id = 73;
 	add1->id = 1;
 	add2->id = 2;
 	add3->id = 3;
 	add4->id = 4;
-	memwr->id = 73;
 
+	memwr->addTarget(0, add1);
 	add1->addTarget(0, add3);
 	add2->addTarget(1, add3);
 	add2->addTarget(0, add4);
-	memwr->addTarget(0, add1);
 
 	memwr->acceptToken(0, std::make_shared<Token>(1, "op11"));
 	add1->acceptToken(1, std::make_shared<Token>(2, "op12"));
@@ -72,7 +73,81 @@ void test1() {
 	Scheduler::Instance()->clear();
 }
 
+void test2() {
+
+	Memory::Instance()->clear();
+
+	// Testing the code given in "prilog" section
+	new MemoryWriteOperation("x"); // = 2
+
+	//1
+	Model::operation("x")->acceptToken(0, std::make_shared<Token>(2, "x"));
+
+	//2
+	new MemoryWriteOperation("y"); // = 3
+	Model::operation("y")->acceptToken(0, std::make_shared<Token>(3, "y"));
+
+	//3
+	new ExpOperation("t1"); // = x ^ 3
+	Model::operation("x")->addTarget(0, Model::operation("t1"));
+	Model::operation("t1")->acceptToken(1, std::make_shared<Token>(3));
+
+	//4
+	new MultOperation("t2"); // = 2 * t1
+	Model::operation("t2")->acceptToken(0, std::make_shared<Token>(2));
+	Model::operation("t1")->addTarget(1, Model::operation("t2"));
+
+	//5
+	new ExpOperation("t3"); // = x ^ 5
+	Model::operation("x")->addTarget(0, Model::operation("t3"));
+	Model::operation("t3")->acceptToken(1, std::make_shared<Token>(5));
+
+	//6
+	new ExpOperation("t4"); // = y ^ 3
+	Model::operation("y")->addTarget(0, Model::operation("t4"));
+	Model::operation("t4")->acceptToken(1, std::make_shared<Token>(3));
+
+	//7
+	new MultOperation("t5"); // = t3 * t4
+	Model::operation("t3")->addTarget(0, Model::operation("t5"));
+	Model::operation("t4")->addTarget(1, Model::operation("t5"));
+
+	//8
+	new AddOperation("t6"); // = t2 + t5
+	Model::operation("t2")->addTarget(0, Model::operation("t6"));
+	Model::operation("t5")->addTarget(1, Model::operation("t6"));
+
+	//9
+	new AddOperation("t7"); // = t6 + 5
+	Model::operation("t6")->addTarget(0, Model::operation("t7"));
+	Model::operation("t7")->acceptToken(1, std::make_shared<Token>(5));
+
+	//10
+	new MemoryWriteOperation("z"); // = t7
+	Model::operation("t7")->addTarget(0, Model::operation("z"));
+
+	//11
+	new MultOperation("t8"); // = x * x
+	Model::operation("x")->addTarget(0, Model::operation("t8"));
+	Model::operation("x")->addTarget(1, Model::operation("t8"));
+
+	//12
+	new AddOperation("t9"); // = t8 + 2
+	Model::operation("t8")->addTarget(0, Model::operation("t9"));
+	Model::operation("t9")->acceptToken(1, std::make_shared<Token>(2));
+
+	//13
+	new MemoryWriteOperation("d"); // = d t9
+	Model::operation("t9")->addTarget(0, Model::operation("d"));
+
+	Scheduler::Instance()->processNow();
+
+	std::cout << Memory::Instance()->get("z") << std::endl;
+	std::cout << Memory::Instance()->get("d") << std::endl;
+}
+
 int main() {
 	test1();
+	test2();
 	return 0;
 }

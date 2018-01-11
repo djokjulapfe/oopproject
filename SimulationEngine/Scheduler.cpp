@@ -50,7 +50,8 @@ bool Scheduler::processNow() {
 		if (first) {
 			std::cout << ((Operation *) first->getTarget())->getName() << ": ";
 		}
-			std::cout << first->getStartTime() << "/" << curTime + first->getTime() << "\n";
+		std::cout << first->getStartTime() << "/";
+		std::cout << curTime + first->getTime() << "\n";
 	} while (processOneEvent());
 	return (first != nullptr);
 }
@@ -62,4 +63,6 @@ void Scheduler::clear() {
 		delete tevent;
 		tevent = first;
 	}
+	curTime = 0;
+	first = nullptr;
 }

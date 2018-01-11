@@ -12,7 +12,9 @@ public:
 
 	void accept(Visitor *visitor) override;
 
-	MemoryWriteOperation(Text name = "Memory Write Operation");
+	explicit MemoryWriteOperation(Text name = "Memory Write Operation");
+
+	void acceptToken(size_t idx, std::shared_ptr<Token> token) override;
 
 };
 
