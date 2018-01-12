@@ -3,19 +3,23 @@
 
 
 #include "../Program.h"
-#include "ICompilation.h"
+#include "ICompilationStrategy.h"
 
 class Compiler {
 
 public:
 
-	explicit Compiler(ICompilation *strategy);
+	virtual ~Compiler();
 
+	explicit Compiler(ICompilationStrategy *strategy);
+
+	// prints the compiled program to a file
+	// TODO: actually print it
 	virtual void compile(Program *program);
 
 protected:
 
-	ICompilation *strategy;
+	ICompilationStrategy *strategy;
 
 };
 

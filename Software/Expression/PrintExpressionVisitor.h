@@ -6,9 +6,9 @@
 
 class PrintExpressionVisitor : public ExpressionVisitor{
 public:
-	void visit(TokenExpression *tokenExpression) override;
+	void visitToken(TokenExpression *tokenExpression) override;
 
-	void visit(CompositeExpression *compositeExpression) override;
+	void visitComposite(CompositeExpression *compositeExpression) override;
 
 	const Text &getOutput() const;
 

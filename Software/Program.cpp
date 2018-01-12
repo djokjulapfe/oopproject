@@ -3,11 +3,6 @@
 #include <sstream>
 #include "Program.h"
 
-Program *Program::Instance() {
-	static Program program;
-	return &program;
-}
-
 void Program::readProgram(Text programPath) {
 
 	size_t programNameStart = programPath.length();
@@ -38,7 +33,7 @@ void Program::readProgram(Text programPath) {
 
 bool Program::nextCommand(Text &command) {
 	if (!lines.empty()) {
-		command = lines.back();
+		command = lines.front();
 		lines.pop();
 		return true;
 	} else return false;

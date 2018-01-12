@@ -5,8 +5,6 @@
 Event::Event(ITimedOperation *targetOperation, Time tm, ID id)
 		: id(id), time(tm), next(nullptr), target(targetOperation) {
 	Scheduler::Instance()->put(this);
-	//startTime = Scheduler::Instance()->getCurTime();
-	// TODO: maby only use one variable?
 	targetOperation->startTime = Scheduler::Instance()->getCurTime();
 	Machine::Instance()->toExecute(targetOperation);
 }

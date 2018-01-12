@@ -7,6 +7,7 @@
 #include <map>
 #include <algorithm>
 #include <memory>
+#include <stack>
 
 using ID = unsigned long;
 using Time = unsigned long;

@@ -2,9 +2,9 @@
 #define OOPPROJECT_SIMPLECOMPILATION_H
 
 
-#include "ICompilation.h"
+#include "ICompilationStrategy.h"
 
-class SimpleCompilation : public ICompilation {
+class SimpleCompilation : public ICompilationStrategy {
 
 public:
 
@@ -12,7 +12,23 @@ public:
 
 protected:
 
-	Expression *parseLine(Text line) override;
+	CompositeExpression *parseLine(Text line) override;
+
+private:
+
+	// can't use std::stack since it doesn't allow access of multiple top
+	// elements
+	std::vector<std::pair<Text, Expression *>> opStack;
+
+	// helper methods
+	std::queue<Text> split(Text text);
+
+	bool isLetter(char c);
+
+	bool isNumber(char c);
+
+	bool isSymbol(char c);
+
 };
 
 

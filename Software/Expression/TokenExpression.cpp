@@ -3,9 +3,8 @@
 #include "Expression.h"
 
 void TokenExpression::accept(ExpressionVisitor *visitor) {
-	visitor->visit(this);
+	visitor->visitToken(this);
 }
 
-TokenExpression::TokenExpression(Text name) {
-	this->name = name;
+TokenExpression::TokenExpression(Text name) : Expression(name) {
 }

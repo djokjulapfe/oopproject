@@ -1,8 +1,8 @@
 #include "CompositeExpression.h"
 #include "ExpressionVisitor.h"
 
-CompositeExpression::CompositeExpression(size_t operandNum, Text opertaionType)
-		: operands(operandNum, nullptr), operationType(opertaionType) {
+CompositeExpression::CompositeExpression(size_t operandNum, Text name, Text opertaionType)
+		: Expression(name), operands(operandNum, nullptr), operationType(opertaionType) {
 }
 
 CompositeExpression::~CompositeExpression() {
@@ -12,7 +12,7 @@ CompositeExpression::~CompositeExpression() {
 }
 
 void CompositeExpression::accept(ExpressionVisitor *visitor) {
-	visitor->visit(this);
+	visitor->visitComposite(this);
 }
 
 const std::vector<Expression *> &CompositeExpression::getOperands() const {

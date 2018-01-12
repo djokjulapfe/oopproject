@@ -8,7 +8,7 @@ class Program {
 
 public:
 
-	static Program* Instance();
+	Program() = default;
 
 	virtual void readProgram(Text programPath);
 
@@ -17,8 +17,6 @@ public:
 	const Text &getName() const;
 
 protected:
-
-	Program() = default;
 
 private:
 

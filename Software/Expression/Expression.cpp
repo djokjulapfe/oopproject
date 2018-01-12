@@ -7,3 +7,6 @@ const Text &Expression::getName() const {
 Expression::~Expression() {
 
 }
+
+Expression::Expression(const Text &name) : name(name) {
+}

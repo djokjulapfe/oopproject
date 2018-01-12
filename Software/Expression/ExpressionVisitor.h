@@ -8,9 +8,9 @@ class ExpressionVisitor {
 
 public:
 
-	virtual void visit(TokenExpression *tokenExpression) = 0;
+	virtual void visitToken(TokenExpression *tokenExpression) = 0;
 
-	virtual void visit(CompositeExpression *compositeExpression) = 0;
+	virtual void visitComposite(CompositeExpression *compositeExpression) = 0;
 
 };
 

@@ -8,7 +8,7 @@ class CompositeExpression : public Expression {
 
 public:
 
-	explicit CompositeExpression(size_t operandNum, Text operationType);
+	explicit CompositeExpression(size_t operandNum, Text name, Text operationType);
 
 	virtual ~CompositeExpression();
 

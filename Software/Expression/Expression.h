@@ -10,6 +10,8 @@ class Expression {
 
 public:
 
+	Expression(const Text &name);
+
 	virtual ~Expression();
 
 	virtual void accept(ExpressionVisitor *visitor) = 0;

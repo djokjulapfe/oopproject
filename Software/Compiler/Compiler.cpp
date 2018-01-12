@@ -1,6 +1,11 @@
+#include <iostream>
 #include "Compiler.h"
 
-Compiler::Compiler(ICompilation *strategy) : strategy(strategy) {
+Compiler::Compiler(ICompilationStrategy *strategy) : strategy(strategy) {
+}
+
+Compiler::~Compiler() {
+	delete strategy;
 }
 
 void Compiler::compile(Program *program) {

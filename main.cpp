@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "Hardware/Operation.h"
 #include "Hardware/AddOperation.h"
 #include "SimulationEngine/SimulationEngine.h"
@@ -8,6 +9,9 @@
 #include "Software/Expression/BinaryOperationExpression.h"
 #include "Software/Expression/TokenExpression.h"
 #include "Software/Expression/PrintExpressionVisitor.h"
+#include "Software/Program.h"
+#include "Software/Compiler/Compiler.h"
+#include "Software/Compiler/SimpleCompilation.h"
 
 void initNewTest() {
 
@@ -18,12 +22,28 @@ void initNewTest() {
 
 }
 
+int myAssert(std::ostringstream& s1, Text s2, Text s) {
+	if (s1.str() != s2) {
+		std::cout << "At (" << s << ") expected output is " << s2 << ", but your output is " << s1.str() << std::endl;
+		return 0;
+	}
+	return 1;
+}
+
 void test1() {
+	int score = 0;
+	int maxScore = 0;
+
 	new AddOperation("addop");
 	Model::operation("addop")->acceptToken(0, std::make_shared<Token>(3));
 	Model::operation("addop")->acceptToken(1, std::make_shared<Token>(2));
 	Model::operation("addop")->notify(0);
-	std::cout << Model::operation("addop")->result->value << std::endl;
+
+	std::ostringstream str1;
+	str1 << Model::operation("addop")->result->value;
+	score += myAssert(str1, "5", "1.1");
+	maxScore++;
+	//std::cout << Model::operation("addop")->result->value << std::endl;
 
 	initNewTest();
 
@@ -39,8 +59,15 @@ void test1() {
 	add2->acceptToken(1, std::make_shared<Token>(4, "op22"));
 	add2->notify(0);
 	add3->notify(0);
-	if (add3->result) std::cout << add3->result->value << std::endl;
-	else std::cout << "Value not yet calculated\n";
+
+	std::ostringstream str2;
+	if (add3->result) str2 << add3->result->value;
+	else str2 << "Value not yet calculated";
+	score += myAssert(str2, "10", "1.2");
+	maxScore++;
+
+//	if (add3->result) std::cout << add3->result->value << std::endl;
+//	else std::cout << "Value not yet calculated\n";
 
 	initNewTest();
 
@@ -73,10 +100,28 @@ void test1() {
 	add2->acceptToken(1, std::make_shared<Token>(4, "op22"));
 	add4->acceptToken(1, std::make_shared<Token>(-5, "op32"));
 	Scheduler::Instance()->processNow();
-	if (add3->result) std::cout << add3->result->value << std::endl;
-	else std::cout << "Value not yet calculated\n";
-	if (add4->result) std::cout << add4->result->value << std::endl;
-	else std::cout << "Value not yet calculated\n";
+
+	std::ostringstream str3;
+	if (add3->result) str3 << add3->result->value;
+	else str3 << "Value not yet calculated";
+	score += myAssert(str3, "15", "1.3");
+	maxScore++;
+
+	std::ostringstream str4;
+	if (add4->result) str4 << add4->result->value;
+	else str4 << "Value not yet calculated";
+	score += myAssert(str4, "-60", "1.4");
+	maxScore++;
+
+	std::cout << "TEST1 finished, result: " << (int) (100.0 * score/maxScore);
+	std::cout << "%\n";
+
+	// TODO: add "Value not yet calculated" test
+
+//	if (add3->result) std::cout << add3->result->value << std::endl;
+//	else std::cout << "Value not yet calculated\n";
+//	if (add4->result) std::cout << add4->result->value << std::endl;
+//	else std::cout << "Value not yet calculated\n";
 }
 
 void test2() {
@@ -213,6 +258,13 @@ void test4() {
 	delete root;
 }
 
+void test5() {
+	Program program;
+	program.readProgram("../programs/prilogProgram.dbp");
+	Compiler compiler(new SimpleCompilation);
+	compiler.compile(&program);
+}
+
 int main() {
 	std::cout << "\n------------TEST1------------\n\n";
 	test1();
@@ -222,6 +274,8 @@ int main() {
 	test3();
 	std::cout << "\n------------TEST4------------\n\n";
 	test4();
+	std::cout << "\n------------TEST5------------\n\n";
+	test5();
 //	int x = 2;
 //	int y = 3;
 //	std::cout << "OUT OF TESTS: " << x*x*x*(2+y*y*y*x*x) + 5<< std::endl;
