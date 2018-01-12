@@ -50,31 +50,17 @@ void Machine::readProgram(Text imfPath) {
 		programNameEnd--;
 	}
 	programName = imfPath.substr(programNameStart,
-								programNameEnd - programNameStart);
-
-	// TODO: actually implement this
-	// openFile
-	// loop through file lines:
-	//   load 1 line
-	//   lines = split the line with ' '
-	//   switch (lines[1]):
-	//     case '=':
-	//       new MemoryWriteOperation(lines[2]);
-	//		 addArgument(0, lines[2], lines[3]);
-	//     case '^':
-	//		 new ExpOperation(lines[2]);
-	//		 addArgument(0, lines[2], lines[3]);
-	//	     addArgument(0, lines[2], lines[4]);
-	//     ...
-	// 	 operationToLabel[M::o(lines[2])] = loop_idx.toStr();
-	// closeFile
+								 programNameEnd - programNameStart);
 
 	std::ifstream imfFile(imfPath);
 	std::string line;
 	if (imfFile.is_open()) {
 		for (int i = 0; !imfFile.eof(); i++) {
 			std::getline(imfFile, line);
-			if (line[0] == '#') continue;
+			if (line[0] == '#') {
+				i--;
+				continue;
+			}
 			std::stringstream ss;
 			ss << line;
 			Text label, operationType, operationName;
@@ -99,7 +85,8 @@ void Machine::readProgram(Text imfPath) {
 			for (size_t j = 0; j < args.size(); ++j) {
 				addArgument(j, operationName, args[j]);
 			}
-			operationToLabel[Model::operation(operationName)] = std::to_string(i);
+			operationToLabel[Model::operation(operationName)] =
+					std::to_string(i + 1);
 		}
 		imfFile.close();
 	} else {

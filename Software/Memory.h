@@ -2,11 +2,10 @@
 #define OOPPROJECT_MEMORY_H
 
 
-#include <map>
-#include <queue>
-#include "../Utils/types.h"
+#include "../Utils/utils.h"
 #include "../SimulationEngine/Scheduler.h"
 #include "../Hardware/Model.h"
+
 class MemoryOperation;
 
 class Memory {

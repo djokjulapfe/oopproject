@@ -2,10 +2,12 @@
 #include "Hardware/Operation.h"
 #include "Hardware/AddOperation.h"
 #include "SimulationEngine/SimulationEngine.h"
-#include "Hardware/MultOperation.h"
-#include "Hardware/MemoryWriteOperation.h"
-#include "Hardware/ExpOperation.h"
+#include "Hardware/Hardware.h"
 #include "Software/Machine.h"
+#include "Software/Expression/CompositeExpression.h"
+#include "Software/Expression/BinaryOperationExpression.h"
+#include "Software/Expression/TokenExpression.h"
+#include "Software/Expression/PrintExpressionVisitor.h"
 
 void initNewTest() {
 
@@ -82,7 +84,6 @@ void test2() {
 
 	initNewTest();
 
-
 	//1
 	new MemoryWriteOperation("x"); // = 2
 	Model::operation("x")->acceptToken(0, std::make_shared<Token>(2, "x"));
@@ -157,6 +158,61 @@ void test3() {
 	Memory::Instance()->printMemory();
 }
 
+void test4() {
+	auto *root = new BinaryOperationExpression("t2", "+");
+	auto *rootLeft = new BinaryOperationExpression("t1", "*");
+	auto *rToken = new TokenExpression("y");
+	auto *llToken = new TokenExpression("2");
+	auto *lrToken = new TokenExpression("x");
+	root->setOperand(0, rootLeft);
+	root->setOperand(1, rToken);
+	rootLeft->setOperand(0, llToken);
+	rootLeft->setOperand(1, lrToken);
+	PrintExpressionVisitor printExpressionVisitor;
+	root->accept(&printExpressionVisitor);
+	std::cout << "Simple tree example:";
+	std::cout << printExpressionVisitor.getOutput() << "\n";
+	delete root;
+
+	// Third line in 'prilog' section
+	auto *opt1 = new BinaryOperationExpression("t1", "^");
+	opt1->setOperand(0, new TokenExpression("x"));
+	opt1->setOperand(1, new TokenExpression("3"));
+
+	auto *opt2 = new BinaryOperationExpression("t2", "*");
+	opt2->setOperand(0, new TokenExpression("2"));
+	opt2->setOperand(1, opt1);
+
+	auto *opt3 = new BinaryOperationExpression("t3", "^");
+	opt3->setOperand(0, new TokenExpression("x"));
+	opt3->setOperand(1, new TokenExpression("5"));
+
+	auto *opt4 = new BinaryOperationExpression("t4", "^");
+	opt4->setOperand(0, new TokenExpression("y"));
+	opt4->setOperand(1, new TokenExpression("3"));
+
+	auto *opt5 = new BinaryOperationExpression("t5", "*");
+	opt5->setOperand(0, opt3);
+	opt5->setOperand(1, opt4);
+
+	auto *opt6 = new BinaryOperationExpression("t6", "+");
+	opt6->setOperand(0, opt2);
+	opt6->setOperand(1, opt5);
+
+	auto *opt7 = new BinaryOperationExpression("t7", "+");
+	opt7->setOperand(0, opt6);
+	opt7->setOperand(1, new TokenExpression("5"));
+
+	root = opt7;
+
+	PrintExpressionVisitor printExpressionVisitor2;
+	root->accept(&printExpressionVisitor2);
+	std::cout << "\nTree example from 'prilog':";
+	std::cout << printExpressionVisitor2.getOutput();
+
+	delete root;
+}
+
 int main() {
 	std::cout << "\n------------TEST1------------\n\n";
 	test1();
@@ -164,6 +220,8 @@ int main() {
 	test2();
 	std::cout << "\n------------TEST3------------\n\n";
 	test3();
+	std::cout << "\n------------TEST4------------\n\n";
+	test4();
 //	int x = 2;
 //	int y = 3;
 //	std::cout << "OUT OF TESTS: " << x*x*x*(2+y*y*y*x*x) + 5<< std::endl;

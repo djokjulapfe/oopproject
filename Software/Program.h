@@ -2,10 +2,30 @@
 #define OOPPROJECT_PROGRAM_H
 
 
-#include "../Utils/types.h"
+#include "../Utils/utils.h"
 
 class Program {
+
+public:
+
+	static Program* Instance();
+
 	virtual void readProgram(Text programPath);
+
+	virtual bool nextCommand(Text &command);
+
+	const Text &getName() const;
+
+protected:
+
+	Program() = default;
+
+private:
+
+	std::queue<Text> lines;
+
+	Text name;
+
 };
 
 

@@ -4,6 +4,6 @@
 #include "Event.h"
 #include "../Utils/Interfaces.h"
 #include "Scheduler.h"
-#include "../Utils/types.h"
+#include "../Utils/utils.h"
 
 #endif //OOPPROJECT_SIMULATIONENGINE_H

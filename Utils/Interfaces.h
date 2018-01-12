@@ -1,7 +1,7 @@
 #ifndef OOPPROJECT_INTERFACES_H
 #define OOPPROJECT_INTERFACES_H
 
-#include "types.h"
+#include "utils.h"
 
 class ITimedOperation {
 
