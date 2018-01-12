@@ -21,13 +21,17 @@ private:
 	std::vector<std::pair<Text, Expression *>> opStack;
 
 	// helper methods
-	std::queue<Text> split(Text text);
+	std::deque<Text> split(Text text, char delimiter);
 
 	bool isLetter(char c);
 
 	bool isNumber(char c);
 
 	bool isSymbol(char c);
+
+	Text renameTemporaryVariables(Text code);
+
+	size_t tmpVarCount, lineCount;
 
 };
 

@@ -5,6 +5,19 @@
 
 void Program::readProgram(Text programPath) {
 
+	// save for future referencing
+	path = programPath;
+
+	imfPath = path;
+	size_t it = imfPath.length() - 1;
+	while (imfPath[it] != '.') {
+		imfPath.pop_back();
+		it--;
+	}
+	logPath = imfPath;
+	logPath.append("log");
+	imfPath.append("imf");
+
 	size_t programNameStart = programPath.length();
 	while (programNameStart >= 0 && programPath[programNameStart] != '/') {
 		programNameStart--;
@@ -41,4 +54,16 @@ bool Program::nextCommand(Text &command) {
 
 const Text &Program::getName() const {
 	return name;
+}
+
+const Text &Program::getPath() const {
+	return path;
+}
+
+const Text &Program::getImfPath() const {
+	return imfPath;
+}
+
+const Text &Program::getLogPath() const {
+	return logPath;
 }

@@ -99,8 +99,7 @@ void Machine::addArgument(size_t idx, Text opTo, Text opFrom) {
 		operationToLabel.end()) {
 		Model::operation(opFrom)->addTarget(idx, Model::operation(opTo));
 	} else {
-		Model::operation(opTo)->acceptToken(idx, std::make_shared<Token>(
-				std::stoi(opFrom)));
+		Model::operation(opTo)->acceptToken(idx, std::make_shared<Token>(std::stoul(opFrom)));
 	}
 }
 
@@ -115,6 +114,19 @@ void Machine::printLog() {
 				  << item.start << "/"
 				  << item.end << std::endl;
 	}
+}
+
+void Machine::exportLog(Text logDir) {
+
+	std::ofstream logger(logDir);
+
+	for (auto &&item : logs) {
+		logger << item.label << ":\t"
+			   << item.start << "/"
+			   << item.end << std::endl;
+	}
+
+	logger.close();
 }
 
 void Machine::clear() {

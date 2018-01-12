@@ -22,9 +22,10 @@ void initNewTest() {
 
 }
 
-int myAssert(std::ostringstream& s1, Text s2, Text s) {
+int myAssert(std::ostringstream &s1, Text s2, Text s) {
 	if (s1.str() != s2) {
-		std::cout << "At (" << s << ") expected output is " << s2 << ", but your output is " << s1.str() << std::endl;
+		std::cout << "At (" << s << ") expected output is " << s2
+				  << ", but your output is " << s1.str() << std::endl;
 		return 0;
 	}
 	return 1;
@@ -113,7 +114,7 @@ void test1() {
 	score += myAssert(str4, "-60", "1.4");
 	maxScore++;
 
-	std::cout << "TEST1 finished, result: " << (int) (100.0 * score/maxScore);
+	std::cout << "TEST1 finished, result: " << (int) (100.0 * score / maxScore);
 	std::cout << "%\n";
 
 	// TODO: add "Value not yet calculated" test
@@ -198,9 +199,9 @@ void test2() {
 void test3() {
 	initNewTest();
 	Machine::Instance()->readProgram("../programs/prilogProgram.imf");
-	Machine::Instance()->execute();
-	Machine::Instance()->printLog();
-	Memory::Instance()->printMemory();
+//	Machine::Instance()->execute();
+//	Machine::Instance()->printLog();
+//	Memory::Instance()->printMemory();
 }
 
 void test4() {
@@ -253,7 +254,7 @@ void test4() {
 	PrintExpressionVisitor printExpressionVisitor2;
 	root->accept(&printExpressionVisitor2);
 	std::cout << "\nTree example from 'prilog':";
-	std::cout << printExpressionVisitor2.getOutput();
+	std::cout << printExpressionVisitor2.getOutput() << std::endl;
 
 	delete root;
 }
@@ -263,21 +264,114 @@ void test5() {
 	program.readProgram("../programs/prilogProgram.dbp");
 	Compiler compiler(new SimpleCompilation);
 	compiler.compile(&program);
+	std::cout << std::endl;
+	std::cout << program.getName() << ".imf:\n";
+	std::cout << compiler.getCompiledCode() << std::endl;
+	compiler.saveToImf();
+	initNewTest();
+	Machine::Instance()->readProgram("../programs/prilogProgram.imf");
+	Machine::Instance()->execute();
+	Machine::Instance()->printLog();
+	Memory::Instance()->printMemory();
 }
 
-int main() {
+bool isCorrect(Text correctPath) {
+	std::ifstream correct(correctPath);
+	std::stringstream calculated(Memory::Instance()->exportMemory());
+	Text corIt, calIt;
+	while (correct >> corIt && calculated >> calIt) {
+		if (corIt != calIt) return false;
+	}
+	return true;
+}
+
+bool unitTest(int idx) {
+	Text testDir = "../programs/unitTests/test";
+	if (idx < 10) testDir.append("0");
+	testDir.append(std::to_string(idx));
+	Text programPath = testDir;
+	programPath.append(".dbp");
+	testDir.append(".txt");
+
+	initNewTest();
+
+	Program program;
+	program.readProgram(programPath);
+
+	Compiler compiler(new SimpleCompilation);
+	compiler.compile(&program);
+
+	compiler.saveToImf();
+
+	Machine::Instance()->readProgram(program.getImfPath());
+	Machine::Instance()->execute();
+	Machine::Instance()->exportLog(program.getLogPath());
+//	Memory::Instance()->printMemory();
+
+	if (isCorrect(testDir)) {
+		std::cout << "Unit Test " << idx << " passed.\n";
+		return true;
+	} else {
+		std::cout << "WRONG ANSWER in unit test " << idx  << ".\n";
+		return false;
+	}
+
+}
+
+void allTests() {
 	std::cout << "\n------------TEST1------------\n\n";
 	test1();
 	std::cout << "\n------------TEST2------------\n\n";
 	test2();
 	std::cout << "\n------------TEST3------------\n\n";
-	test3();
+//	test3();
 	std::cout << "\n------------TEST4------------\n\n";
 	test4();
 	std::cout << "\n------------TEST5------------\n\n";
 	test5();
-//	int x = 2;
-//	int y = 3;
-//	std::cout << "OUT OF TESTS: " << x*x*x*(2+y*y*y*x*x) + 5<< std::endl;
+}
+
+int main(int argc, char *argv[]) {
+	std::stringstream ss;
+	for (int i = 0; i < argc; ++i) {
+		ss << argv[i] << " ";
+	}
+	std::string programPath, confPath;
+	ss >> programPath >> programPath >> confPath;
+	if (programPath == "-ut" && !confPath.empty()) {
+
+		Model::Instance()->loadConfig(confPath);
+
+		int suc = 0;
+		int num = 0;
+		for (int i = 1; i < 100; i++) {
+			suc += unitTest(i);
+			num ++;
+		}
+		std::cout << "Unit tests done, " << 100 * suc / num << "%\n";
+
+	} else if (!programPath.empty() && !confPath.empty()) {
+
+		Model::Instance()->loadConfig(confPath);
+
+		Program program;
+		program.readProgram("../programs/prilogProgram.dbp");
+
+		Compiler compiler(new SimpleCompilation);
+		compiler.compile(&program);
+
+		compiler.saveToImf();
+
+		Machine::Instance()->readProgram(program.getImfPath());
+		Machine::Instance()->execute();
+		Machine::Instance()->exportLog(program.getLogPath());
+		Memory::Instance()->printMemory();
+
+	} else {
+
+		allTests();
+
+	}
+
 	return 0;
 }

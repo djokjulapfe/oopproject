@@ -16,6 +16,12 @@ public:
 
 	const Text &getName() const;
 
+	const Text &getPath() const;
+
+	const Text &getImfPath() const;
+
+	const Text &getLogPath() const;
+
 protected:
 
 private:
@@ -23,6 +29,8 @@ private:
 	std::queue<Text> lines;
 
 	Text name;
+
+	Text path, imfPath, logPath;
 
 };
 

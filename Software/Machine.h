@@ -25,8 +25,9 @@ public:
 	// Calls Operation::send() in executing -> completed transition
 	virtual void execute();
 
-	// TODO: add printing to file (or a separate method exportLog())
 	virtual void printLog();
+
+	virtual void exportLog(Text programPath);
 
 	virtual void clear();
 

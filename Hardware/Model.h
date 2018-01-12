@@ -22,6 +22,8 @@ public:
 
 	virtual void clear();
 
+	virtual void loadConfig(Text confPath);
+
 	virtual Operation *findByName(const Text &name);
 
 	Time Ts, Tm, Te, Mw, Mr;

@@ -17,9 +17,15 @@ public:
 	// TODO: actually print it
 	virtual void compile(Program *program);
 
+	virtual const Text &getCompiledCode();
+
+	virtual void saveToImf();
+
 protected:
 
 	ICompilationStrategy *strategy;
+
+	Program *program;
 
 };
 

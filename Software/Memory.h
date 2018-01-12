@@ -21,6 +21,8 @@ public:
 
 	virtual void printMemory();
 
+	virtual std::stringstream exportMemory();
+
 	// time until the memory is busy
 	virtual Time writeFreeIn();
 

@@ -13,15 +13,19 @@ public:
 
 	virtual void compile(Program *program) = 0;
 
+	const Text &getCompiledCode() const;
+
 protected:
 
 	virtual CompositeExpression* parseLine(Text line) = 0;
 
-	virtual void outputExpression(CompositeExpression *expression);
+	virtual Text outputExpression(CompositeExpression *expression);
 
 public:
 
 	static size_t getPriority(Text operation);
+
+	Text compiledCode;
 
 };
 

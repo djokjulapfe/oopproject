@@ -2,14 +2,15 @@
 #include "ICompilationStrategy.h"
 #include "../Expression/PrintExpressionVisitor.h"
 
-void ICompilationStrategy::outputExpression(CompositeExpression *expression) {
+Text ICompilationStrategy::outputExpression(CompositeExpression *expression) {
 	if (expression == nullptr) {
+		// TODO: throw exception
 		std::cout << "No expression given in ICS::outputExpression\n";
-		return;
+		return "";
 	}
 	PrintExpressionVisitor visitor;
 	visitor.visitComposite(expression);
-	std::cout << visitor.getOutput() << std::endl;
+	return visitor.getOutput();
 }
 
 size_t ICompilationStrategy::getPriority(Text operation) {
@@ -18,4 +19,8 @@ size_t ICompilationStrategy::getPriority(Text operation) {
 	if (operation == "*") return 3;
 	if (operation == "^") return 4;
 	return 0; // TODO: throw exception?
+}
+
+const Text &ICompilationStrategy::getCompiledCode() const {
+	return compiledCode;
 }

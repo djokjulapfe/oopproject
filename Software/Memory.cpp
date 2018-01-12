@@ -1,5 +1,6 @@
 #include <climits>
 #include <iostream>
+#include <sstream>
 #include "Memory.h"
 #include "../Hardware/MemoryOperation.h"
 
@@ -73,6 +74,14 @@ void Memory::printMemory() {
 	for (auto &&item : mem) {
 		std::cout << item.first << " = " << item.second << std::endl;
 	}
+}
+
+std::stringstream Memory::exportMemory() {
+	std::stringstream ret;
+	for (auto &&item : mem) {
+		ret << item.first << " = " << (size_t)item.second << std::endl;
+	}
+	return ret;
 }
 
 void Memory::Thread::add(MemoryOperation *op) {
