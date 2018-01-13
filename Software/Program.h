@@ -14,6 +14,8 @@ public:
 
 	virtual bool nextCommand(Text &command);
 
+	virtual void seek(size_t line);
+
 	const Text &getName() const;
 
 	const Text &getPath() const;
@@ -26,11 +28,13 @@ protected:
 
 private:
 
-	std::queue<Text> lines;
+	std::vector<Text> lines;
 
 	Text name;
 
 	Text path, imfPath, logPath;
+
+	size_t pointer;
 
 };
 

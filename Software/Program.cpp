@@ -7,6 +7,7 @@ void Program::readProgram(Text programPath) {
 
 	// save for future referencing
 	path = programPath;
+	pointer = 0;
 
 	imfPath = path;
 	size_t it = imfPath.length() - 1;
@@ -36,7 +37,7 @@ void Program::readProgram(Text programPath) {
 		for (int i = 0; !programFile.eof(); i++) {
 			std::getline(programFile, line);
 			if (line[0] == '#') continue;
-			lines.push(line);
+			lines.push_back(line);
 		}
 		programFile.close();
 	} else {
@@ -45,9 +46,8 @@ void Program::readProgram(Text programPath) {
 }
 
 bool Program::nextCommand(Text &command) {
-	if (!lines.empty()) {
-		command = lines.front();
-		lines.pop();
+	if (!lines.empty() && pointer < lines.size()) {
+		command = lines[pointer++];
 		return true;
 	} else return false;
 }
@@ -66,4 +66,10 @@ const Text &Program::getImfPath() const {
 
 const Text &Program::getLogPath() const {
 	return logPath;
+}
+
+void Program::seek(size_t line) {
+	if (line < lines.size()) {
+		pointer = line;
+	}
 }

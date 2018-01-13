@@ -1,6 +1,7 @@
 #include "MemoryWriteOperation.h"
 #include "Token.h"
 #include "../SimulationEngine/Event.h"
+#include "../Visitor/Visitor.h"
 
 void MemoryWriteOperation::process() {
 	result = std::make_shared<Token>();
@@ -14,7 +15,7 @@ void MemoryWriteOperation::process() {
 }
 
 void MemoryWriteOperation::accept(Visitor *visitor) {
-	// TODO: implement this
+	visitor->visitMemoryWrite(this);
 }
 
 MemoryWriteOperation::MemoryWriteOperation(Text name) : MemoryOperation(name) {

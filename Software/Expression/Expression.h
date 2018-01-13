@@ -20,6 +20,7 @@ public:
 
 protected:
 
+	// TODO: remove parent
 	CompositeExpression *parent;
 
 	Text name;

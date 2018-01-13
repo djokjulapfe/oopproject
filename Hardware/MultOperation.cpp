@@ -1,5 +1,6 @@
 #include "MultOperation.h"
 #include "Model.h"
+#include "../Visitor/Visitor.h"
 
 void MultOperation::process() {
 	result = std::make_shared<Token>();
@@ -7,7 +8,7 @@ void MultOperation::process() {
 }
 
 void MultOperation::accept(Visitor *visitor) {
-	// TODO: implement
+	visitor->visitMult(this);
 }
 
 MultOperation::MultOperation(Text name) : ArithmeticOperation(name) {

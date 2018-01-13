@@ -19,7 +19,12 @@ protected:
 
 	virtual CompositeExpression* parseLine(Text line) = 0;
 
-	virtual Text outputExpression(CompositeExpression *expression);
+	virtual Text expressionToString(CompositeExpression *expression);
+
+	// TODO: move this to the Interface
+	Text renameTemporaryVariables(Text code);
+
+	size_t tmpVarCount, lineCount;
 
 public:
 

@@ -5,7 +5,7 @@ nameSize = 3
 varNum = 10
 exprNum = 30
 exprSize = 10
-maxNum = 5
+maxNum = 10
 maxRes = 1e9
 
 
@@ -63,7 +63,7 @@ def createTest(testName):
 			expr, evaluable = rnd_expr(vars)
 			while (eval(evaluable) > maxRes):
 				expr, evaluable = rnd_expr(vars)
-			out_file.write('{} = {}\n'.format(expr_names[0], expr))
+			out_file.write('{} = {}{}'.format(expr_names[0], expr, '\n' if i != exprNum-1 else ''))
 			vars[expr_names[0]] = eval(evaluable)
 			expr_names = expr_names[1:]
 
@@ -73,9 +73,8 @@ def createTest(testName):
 		results.sort()
 
 		with open(testName + '.txt', 'w') as out_result:
-			for i in range(len(results) - 1):
-				out_result.write(results[i] + '\n')
-			out_result.write(results[-1])
+			for v in results:
+				out_result.write(v + '\n')
 
 for idx in range(10, 100):
 	print(100 * (idx - 10) // 89)

@@ -1,18 +1,16 @@
-#include <iostream>
-#include <sstream>
-#include "SimpleCompilation.h"
+#include "AdvancedCompilation.h"
+#include "Parser.h"
 #include "../Expression/CompositeExpression.h"
 #include "../Expression/TokenExpression.h"
 #include "../Expression/BinaryOperationExpression.h"
-#include "Parser.h"
 
-void SimpleCompilation::compile(Program *program) {
-	Text programLine;
+void AdvancedCompilation::compile(Program *program) {
+	auto lines = prepareProgram(program);
 	tmpVarCount = 0;
 	lineCount = 0;
 	compiledCode = "";
-	while (program->nextCommand(programLine)) {
-		auto expr = parseLine(programLine);
+	for (auto &&line: lines) {
+		auto expr = parseLine(line);
 		auto outputExpression1 = expressionToString(expr);
 		compiledCode.append(renameTemporaryVariables(outputExpression1));
 		delete expr;
@@ -20,7 +18,7 @@ void SimpleCompilation::compile(Program *program) {
 	compiledCode.erase(0, 1);
 }
 
-CompositeExpression *SimpleCompilation::parseLine(Text line) {
+CompositeExpression *AdvancedCompilation::parseLine(Text line) {
 	//while (!opStack.empty()) opStack.pop();
 	// TODO: this might cause a memory leak
 	opStack.clear();
@@ -40,10 +38,10 @@ CompositeExpression *SimpleCompilation::parseLine(Text line) {
 	while (!tokens.empty()) {
 		// TODO: baptize this code
 		// TODO: add isAlphaNum(char c)
-		if (isNumber(tokens.back()[0]) || isLetter(tokens.back()[0])) {
+		if (Parser::isNumber(tokens.back()[0]) || Parser::isLetter(tokens.back()[0])) {
 			opStack.emplace_back(tokens.back(),
 								 new TokenExpression(tokens.back()));
-		} else if (isSymbol(tokens.back()[0])) {
+		} else if (Parser::isSymbol(tokens.back()[0])) {
 			Text tmpVarName = "t";
 			tmpVarName.append(std::to_string(++tmpVarCount));
 			opStack.emplace_back(tokens.back(),
@@ -86,57 +84,74 @@ CompositeExpression *SimpleCompilation::parseLine(Text line) {
 	return root;
 }
 
-std::deque<Text> SimpleCompilation::split(Text text, char delimiter) {
-	std::deque<Text> ret;
-	text.erase(std::remove_if(text.begin(), text.end(),
-							  [=](char c) {
-								  return c == delimiter;
-							  }), text.end());
+std::vector<Text> AdvancedCompilation::prepareProgram(Program *program) {
+	std::map<Text, std::set<Text>> dependency;
+	std::map<Text, size_t> numberOfOccurrences;
+	std::vector<std::vector<Text>> sortedLines;
 
-	while (text.length() > 0) {
-		Text token;
-		if (isLetter(text[0])) {
-			while (text.length() > 0 &&
-				   (isLetter(text[0]) || isNumber(text[0]))) {
-				token.append(1, text[0]);
-				text.erase(0, 1);
-			}
-		} else if (isNumber(text[0])) {
-			while (text.length() > 0 && isNumber(text[0])) {
-				token.append(1, text[0]);
-				text.erase(0, 1);
-			}
-		} else if (isSymbol(text[0])) {
-			while (text.length() > 0 && isSymbol(text[0])) {
-				token.append(1, text[0]);
-				text.erase(0, 1);
-			}
-		} else {
-			// TODO: add exceptions here
-			std::cout << "Bad expression!\n";
-			text.erase(0, 1);
+	program->seek(0);
+	Text cmd;
+	while (program->nextCommand(cmd)) {
+		auto tokens = Parser::parse(cmd);
+		sortedLines.push_back(tokens);
+		numberOfOccurrences[tokens[0]] = 0;
+		dependency[tokens[0]] = dependentVariables(tokens);
+		for (auto &&item : dependency[tokens[0]]) {
+			numberOfOccurrences[item]++;
 		}
-		ret.push_back(token);
 	}
 
-	// This works when using std::vector<Text>, and not with std::queue
-//	std::cout << "Tokens: [";
-//	for (int i = 0; i < ret.size() - 1; ++i) {
-//		std::cout << ret[i] << ", ";
+//	size_t debug_iterator = 0;
+//	std::sort(sortedLines.begin(), sortedLines.end(),
+//			  [&](const std::vector<Text> &lhs, const std::vector<Text> &rhs) -> bool {
+//				  // if lhs in dep[rhs]: return false
+//				  debug_iterator++;
+//				  if (dependency[lhs[0]].find(rhs[0]) != dependency[lhs[0]].end()) return false;
+//				  return numberOfOccurrences[lhs[0]] >= numberOfOccurrences[rhs[0]];
+//			  });
+
+	for (int i = 0; i < sortedLines.size()-1; ++i) {
+		for (int j = i + 1; j < sortedLines.size(); ++j) {
+			auto lhs = sortedLines[i];
+			auto rhs = sortedLines[j];
+			bool swap;
+			if (dependency[lhs[0]].find(rhs[0]) != dependency[lhs[0]].end()) swap = false;
+			else swap = numberOfOccurrences[lhs[0]] >= numberOfOccurrences[rhs[0]];
+			if (swap) {
+				auto tmp = sortedLines[i];
+				sortedLines[i] = sortedLines[j];
+				sortedLines[j] = tmp;
+			}
+		}
+	}
+
+	std::vector<Text> ret;
+
+//	for (auto &&line : sortedLines) {
+//		Text tit;
+//		for (auto &&item : line) {
+//			tit.append(item);
+//			std::cout << item << " ";
+//		}
+//		ret.push_back(tit);
+//		std::cout << std::endl;
 //	}
-//	std::cout << ret[ret.size() - 1] << "]\n";
 
 	return ret;
 }
 
-bool SimpleCompilation::isLetter(char c) {
-	return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
-}
+std::set<Text>
+AdvancedCompilation::dependentVariables(std::vector<Text> Tokens) {
+	std::set<Text> ret;
 
-bool SimpleCompilation::isNumber(char c) {
-	return c >= '0' && c <= '9';
-}
+	// erase 'varName ='
+	Tokens.erase(Tokens.begin(), Tokens.begin() + 1);
 
-bool SimpleCompilation::isSymbol(char c) {
-	return c == '=' || c == '+' || c == '*' || c == '^';
+	for (auto &&token : Tokens) {
+		if (Parser::isLetter(token[0])) {
+			ret.insert(token);
+		}
+	}
+
+	return ret;
 }

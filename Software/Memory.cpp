@@ -26,8 +26,21 @@ void Memory::addWriter(MemoryOperation *op) {
 	idlest->add(op);
 }
 
+void Memory::addReader(MemoryOperation *op) {
+	Thread *idlest = idlestReadingThread();
+	idlest->add(op);
+}
+
 Time Memory::writeFreeIn() {
 	Thread *idlest = idlestWritingThread();
+	if (idlest->busyUntil > Scheduler::Instance()->getCurTime()) {
+		return idlest->busyUntil - Scheduler::Instance()->getCurTime();
+	}
+	return 0;
+}
+
+Time Memory::readFreeIn() {
+	Thread *idlest = idlestReadingThread();
 	if (idlest->busyUntil > Scheduler::Instance()->getCurTime()) {
 		return idlest->busyUntil - Scheduler::Instance()->getCurTime();
 	}

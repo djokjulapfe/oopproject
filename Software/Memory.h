@@ -30,6 +30,10 @@ public:
 
 	// TODO: implement similar functions for reading
 
+	virtual Time readFreeIn();
+
+	virtual void addReader(MemoryOperation *op);
+
 	class Thread {
 
 	public:

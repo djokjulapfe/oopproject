@@ -6,6 +6,7 @@
 #include "ExpOperation.h"
 #include "MemoryOperation.h"
 #include "MemoryWriteOperation.h"
+#include "MemoryReadOperation.h"
 #include "Model.h"
 #include "MultOperation.h"
 #include "Operation.h"

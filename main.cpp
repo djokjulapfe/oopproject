@@ -12,6 +12,7 @@
 #include "Software/Program.h"
 #include "Software/Compiler/Compiler.h"
 #include "Software/Compiler/SimpleCompilation.h"
+#include "Software/Compiler/AdvancedCompilation.h"
 
 void initNewTest() {
 
@@ -198,10 +199,10 @@ void test2() {
 
 void test3() {
 	initNewTest();
-	Machine::Instance()->readProgram("../programs/prilogProgram.imf");
-//	Machine::Instance()->execute();
-//	Machine::Instance()->printLog();
-//	Memory::Instance()->printMemory();
+	Machine::Instance()->readProgram("../programs/prilogProgramUnchanged.imf");
+	Machine::Instance()->execute();
+	Machine::Instance()->printLog();
+	Memory::Instance()->printMemory();
 }
 
 void test4() {
@@ -269,7 +270,23 @@ void test5() {
 	std::cout << compiler.getCompiledCode() << std::endl;
 	compiler.saveToImf();
 	initNewTest();
-	Machine::Instance()->readProgram("../programs/prilogProgram.imf");
+	Machine::Instance()->readProgram(program.getImfPath());
+	Machine::Instance()->execute();
+	Machine::Instance()->printLog();
+	Memory::Instance()->printMemory();
+}
+
+void test6() {
+	Program program;
+	program.readProgram("../programs/advancedTest.dbp");
+	Compiler compiler(new AdvancedCompilation);
+	compiler.compile(&program);
+	std::cout << std::endl;
+	std::cout << program.getName() << ".imf:\n";
+	std::cout << compiler.getCompiledCode() << std::endl;
+	compiler.saveToImf();
+	initNewTest();
+	Machine::Instance()->readProgram(program.getImfPath());
 	Machine::Instance()->execute();
 	Machine::Instance()->printLog();
 	Memory::Instance()->printMemory();
@@ -285,7 +302,7 @@ bool isCorrect(Text correctPath) {
 	return true;
 }
 
-bool unitTest(int idx) {
+bool unitTest(size_t idx, Text algorithm) {
 	Text testDir = "../programs/unitTests/test";
 	if (idx < 10) testDir.append("0");
 	testDir.append(std::to_string(idx));
@@ -298,7 +315,13 @@ bool unitTest(int idx) {
 	Program program;
 	program.readProgram(programPath);
 
-	Compiler compiler(new SimpleCompilation);
+	ICompilationStrategy *strategy;
+	if (algorithm == "simple") {
+		strategy = new SimpleCompilation;
+	} else if (algorithm == "advanced") {
+		strategy = new AdvancedCompilation;
+	}
+	Compiler compiler(strategy);
 	compiler.compile(&program);
 
 	compiler.saveToImf();
@@ -312,7 +335,7 @@ bool unitTest(int idx) {
 		std::cout << "Unit Test " << idx << " passed.\n";
 		return true;
 	} else {
-		std::cout << "WRONG ANSWER in unit test " << idx  << ".\n";
+		std::cout << "WRONG ANSWER in unit test " << idx << ".\n";
 		return false;
 	}
 
@@ -324,38 +347,96 @@ void allTests() {
 	std::cout << "\n------------TEST2------------\n\n";
 	test2();
 	std::cout << "\n------------TEST3------------\n\n";
-//	test3();
+	test3();
 	std::cout << "\n------------TEST4------------\n\n";
 	test4();
 	std::cout << "\n------------TEST5------------\n\n";
 	test5();
+	std::cout << "\n------------TEST6------------\n\n";
+	test6();
 }
 
 int main(int argc, char *argv[]) {
+
+	// TODO: add help
+	// TODO: add differing .cfg files to unit tests
+
 	std::stringstream ss;
 	for (int i = 0; i < argc; ++i) {
 		ss << argv[i] << " ";
 	}
-	std::string programPath, confPath;
-	ss >> programPath >> programPath >> confPath;
-	if (programPath == "-ut" && !confPath.empty()) {
+
+	std::map<Text, Text> args;
+	Text arg;
+	// remove program name
+	ss >> arg;
+
+	Text id, val;
+
+	while (std::getline(ss, id, '=')) {
+		if (id[0] == ' ') id.erase(0, 1);
+		if (id[id.length()-1] == ' ') id.pop_back();
+		if (id[0] == '-') {
+			id.erase(0, 1);
+			args[id] = "true";
+		} else {
+			std::getline(ss, val, ' ');
+			args[id] = val;
+		}
+	}
+
+	for (auto &&item : args) {
+		std::cout << item.first << "=" << item.second << std::endl;
+	}
+
+	Text programPath = "../programs/prilogProgram.dbp";;
+	Text confPath = "../programs/prilogProgram.cfg";
+	bool unitTesting = false;
+	bool simpleTesting = false;
+	size_t utStart = 1;
+	size_t utEnd = 100;
+	Text algorithm = "simple";
+
+	if (args.find("pp") != args.end()) programPath = args["pp"];
+
+	if (args.find("cp") != args.end()) confPath = args["cp"];
+
+	if (args.find("ut") != args.end())
+		unitTesting = (args["ut"][0] | 32) == 't';
+
+	if (args.find("st") != args.end())
+		simpleTesting = (args["st"][0] | 32) == 't';
+
+	if (args.find("utstart") != args.end())
+		utStart = std::stoul(args["utstart"]);
+
+	if (args.find("utend") != args.end())
+		utStart = std::stoul(args["utend"]);
+
+	if (args.find("alg") != args.end()) algorithm = args["alg"];
+
+	if (args.find("ut") != args.end()) {
 
 		Model::Instance()->loadConfig(confPath);
 
 		int suc = 0;
 		int num = 0;
-		for (int i = 1; i < 100; i++) {
-			suc += unitTest(i);
-			num ++;
+		for (size_t i = utStart; i < utEnd; i++) {
+			suc += unitTest(i, "advanced");
+			num++;
 		}
-		std::cout << "Unit tests done, " << 100 * suc / num << "%\n";
+		std::cout << "Unit tests done, " << 100 * suc / num << "% passed\n";
 
-	} else if (!programPath.empty() && !confPath.empty()) {
+	} else if (args.find("st") != args.end()) {
+
+		allTests();
+
+	} else {
 
 		Model::Instance()->loadConfig(confPath);
 
 		Program program;
-		program.readProgram("../programs/prilogProgram.dbp");
+		program.readProgram(programPath);
 
 		Compiler compiler(new SimpleCompilation);
 		compiler.compile(&program);
@@ -367,11 +448,52 @@ int main(int argc, char *argv[]) {
 		Machine::Instance()->exportLog(program.getLogPath());
 		Memory::Instance()->printMemory();
 
-	} else {
-
-		allTests();
-
 	}
+
+//	ss >> programPath >> programPath >> confPath;
+//	// TODO: add something that is not hardcoded
+//	if (programPath == "-ut" && !confPath.empty()) {
+//
+//		Text start_idx_text, end_idx_text;
+//		ss >> start_idx_text >> end_idx_text;
+//		size_t start_idx(1), end_idx(100);
+//		if (!start_idx_text.empty() && !start_idx_text.empty()) {
+//			start_idx = std::stoul(start_idx_text);
+//			end_idx = std::stoul(end_idx_text);
+//		}
+//
+//		Model::Instance()->loadConfig(confPath);
+//
+//		int suc = 0;
+//		int num = 0;
+//		for (size_t i = start_idx; i < end_idx; i++) {
+//			suc += unitTest(i, "advanced");
+//			num++;
+//		}
+//		std::cout << "Unit tests done, " << 100 * suc / num << "% passed\n";
+//
+//	} else if (!programPath.empty() && !confPath.empty()) {
+//
+//		Model::Instance()->loadConfig(confPath);
+//
+//		Program program;
+//		program.readProgram("../programs/prilogProgram.dbp");
+//
+//		Compiler compiler(new SimpleCompilation);
+//		compiler.compile(&program);
+//
+//		compiler.saveToImf();
+//
+//		Machine::Instance()->readProgram(program.getImfPath());
+//		Machine::Instance()->execute();
+//		Machine::Instance()->exportLog(program.getLogPath());
+//		Memory::Instance()->printMemory();
+//
+//	} else {
+//
+//		allTests();
+//
+//	}
 
 	return 0;
 }

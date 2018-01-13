@@ -1,5 +1,6 @@
 #include "AddOperation.h"
 #include "Model.h"
+#include "../Visitor/Visitor.h"
 
 void AddOperation::process() {
 	result = std::make_shared<Token>();
@@ -7,7 +8,7 @@ void AddOperation::process() {
 }
 
 void AddOperation::accept(Visitor *visitor) {
-	// TODO: implement this
+	visitor->visitAdd(this);
 }
 
 AddOperation::AddOperation(Text name) : ArithmeticOperation(name) {

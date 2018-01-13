@@ -29,10 +29,6 @@ private:
 
 	bool isSymbol(char c);
 
-	Text renameTemporaryVariables(Text code);
-
-	size_t tmpVarCount, lineCount;
-
 };
 
 
