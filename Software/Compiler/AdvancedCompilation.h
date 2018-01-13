@@ -25,6 +25,10 @@ private:
 	// helper methods
 	virtual std::set<Text> dependentVariables(std::vector<Text> Tokens);
 
+	virtual Expression * subDivide(std::vector<Text> subLine, Text token);
+
+	virtual Text nextToken(Text token);
+
 };
 
 

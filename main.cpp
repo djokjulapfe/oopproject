@@ -322,7 +322,7 @@ bool isCorrect(Text correctPath) {
 	return true;
 }
 
-bool unitTest(size_t idx, Text algorithm) {
+long unitTest(size_t idx, Text algorithm) {
 	Text testDir = "../programs/unitTests/test";
 	if (idx < 10) testDir.append("0");
 	testDir.append(std::to_string(idx));
@@ -354,10 +354,10 @@ bool unitTest(size_t idx, Text algorithm) {
 
 	if (isCorrect(testDir)) {
 		std::cout << "Unit Test " << idx << " passed.\n";
-		return true;
+		return Scheduler::Instance()->getCurTime();
 	} else {
 		std::cout << "WRONG ANSWER in unit test " << idx << ".\n";
-		return false;
+		return -1;
 	}
 
 }
@@ -427,11 +427,20 @@ int main(int argc, char *argv[]) {
 
 		int suc = 0;
 		int num = 0;
+		long time = 0;
 		for (size_t i = utStart; i < utEnd; i++) {
-			suc += unitTest(i, algorithm);
+			long dt = unitTest(i, algorithm);
+			if (dt != -1) {
+				suc++;
+				time += dt;
+			}
 			num++;
 		}
-		std::cout << "Unit tests done, " << 100.0 * suc / num << "% passed\n";
+
+		std::cout << "\n------REPORT------\n\n";
+		std::cout << "Using " << algorithm << " algorithm\n";
+		std::cout << "Unit tests: " << 100.0 * suc / num << "% passed\n";
+		std::cout << "Average runtetime: " << 1.0 * time / suc << " ops \n";
 
 	} else if (args.find("st") != args.end()) {
 
