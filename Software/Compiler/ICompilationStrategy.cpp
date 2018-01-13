@@ -3,13 +3,12 @@
 #include "ICompilationStrategy.h"
 #include "../Expression/PrintExpressionVisitor.h"
 #include "Parser.h"
+#include "../../Exceptions/BadExpressionException.h"
 
 Text ICompilationStrategy::expressionToString(CompositeExpression *expression) {
 	// creates Text from Expression
 	if (expression == nullptr) {
-		// TODO: throw exception
-		std::cout << "No expression given in ICS::expressionToString\n";
-		return "";
+		throw BadExpressionException("No expression given");
 	}
 	PrintExpressionVisitor visitor;
 	visitor.visitComposite(expression);
@@ -21,7 +20,7 @@ size_t ICompilationStrategy::getPriority(Text operation) {
 	if (operation == "+") return 2;
 	if (operation == "*") return 3;
 	if (operation == "^") return 4;
-	return 0; // TODO: throw exception?
+	return 0;
 }
 
 const Text &ICompilationStrategy::getCompiledCode() const {
@@ -30,9 +29,7 @@ const Text &ICompilationStrategy::getCompiledCode() const {
 Text ICompilationStrategy::renameTemporaryVariables(Text code) {
 	// TODO: remove dependecy on not having variables with name 't#*'
 	if (code.empty()) {
-		// TODO: throw exception?
-		std::cout << "Empty string passed to renameTemporaryVariable\n";
-		return "";
+		throw BadExpressionException("No code given for renaming");
 	}
 	std::map<Text, Text> oldToNew;
 	std::vector<Text> lines;

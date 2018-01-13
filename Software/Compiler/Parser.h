@@ -14,6 +14,8 @@ public:
 	static bool isNumber(char c);
 
 	static bool isSymbol(char c);
+
+	static bool isAlphaNum(char c);
 };
 
 

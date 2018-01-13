@@ -21,10 +21,11 @@ protected:
 
 	virtual Text expressionToString(CompositeExpression *expression);
 
-	// TODO: move this to the Interface
 	Text renameTemporaryVariables(Text code);
 
 	size_t tmpVarCount, lineCount;
+
+	std::set<Text> varNames;
 
 public:
 

@@ -8,3 +8,7 @@ void TokenExpression::accept(ExpressionVisitor *visitor) {
 
 TokenExpression::TokenExpression(Text name) : Expression(name) {
 }
+
+bool TokenExpression::isComposite() {
+	return false;
+}

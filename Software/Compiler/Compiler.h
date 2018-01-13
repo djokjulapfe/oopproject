@@ -13,8 +13,6 @@ public:
 
 	explicit Compiler(ICompilationStrategy *strategy);
 
-	// prints the compiled program to a file
-	// TODO: actually print it
 	virtual void compile(Program *program);
 
 	virtual const Text &getCompiledCode();

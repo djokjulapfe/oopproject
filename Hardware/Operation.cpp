@@ -6,8 +6,6 @@
 #include "Model.h"
 #include "../Software/Machine.h"
 
-ID Operation::maxId = 0;
-
 const Text &Operation::getName() const {
 	return name;
 }
@@ -58,8 +56,6 @@ void Operation::addTarget(size_t idx, Operation *operation) {
 
 Operation::Operation(size_t inputPortSize, Text name)
 		: inputPorts(inputPortSize, std::shared_ptr<Token>()), name(name) {
-	id = maxId;
-	maxId++;
 	result = nullptr;
 	Model::Instance()->add(this);
 	Machine::Instance()->addOp(this);
@@ -67,7 +63,6 @@ Operation::Operation(size_t inputPortSize, Text name)
 
 void Operation::notify(ID id) {
 	process(); // create result
+	// inform the machine to send the token
 	Machine::Instance()->toCompleted(this);
-	// TODO: move this to Machine
-	send(); // send the result to target
 }

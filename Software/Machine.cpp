@@ -27,6 +27,7 @@ void Machine::toCompleted(ITimedOperation *operation) {
 	logs.insert(LogElement(operationToLabel[operation],
 						   operation->startTime,
 						   operation->startTime + operation->opTime));
+	operation->send();
 }
 
 void Machine::addOp(ITimedOperation *operation) {

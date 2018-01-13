@@ -3,6 +3,7 @@
 #include <sstream>
 #include "Memory.h"
 #include "../Hardware/MemoryOperation.h"
+#include "../Exceptions/VarNotAvailableException.h"
 
 Memory *Memory::Instance() {
 	static Memory instance;
@@ -14,6 +15,12 @@ void Memory::set(Text varName, double val) {
 }
 
 double Memory::get(Text varName) {
+	if (mem.find(varName) == mem.end()) {
+		Text msg = "Trying to access ";
+		msg.append(varName);
+		clear();
+		throw VarNotAvailableException(msg);
+	}
 	return mem[varName];
 }
 
@@ -85,7 +92,7 @@ void Memory::clear() {
 
 void Memory::printMemory() {
 	for (auto &&item : mem) {
-		std::cout << item.first << " = " << item.second << std::endl;
+		std::cout << item.first << " = " << (size_t) item.second << std::endl;
 	}
 }
 
@@ -106,10 +113,9 @@ void Memory::Thread::add(MemoryOperation *op) {
 	// Calculate time
 	Time curTime = Scheduler::Instance()->getCurTime();
 	if (curTime > busyUntil) {
-		// TODO: add a flag for r/w
-		busyUntil = curTime + Model::Instance()->Mw;
+		busyUntil = curTime + op->opTime;
 	} else {
-		busyUntil += Model::Instance()->Mw;
+		busyUntil += op->opTime;
 	}
 }
 

@@ -18,10 +18,9 @@ public:
 
 	const Text &getName() const;
 
-protected:
+	virtual bool isComposite() = 0;
 
-	// TODO: remove parent
-	CompositeExpression *parent;
+protected:
 
 	Text name;
 

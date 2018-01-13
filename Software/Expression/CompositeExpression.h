@@ -22,6 +22,8 @@ public:
 
 	const Text &getOperationType() const;
 
+	bool isComposite() override;
+
 protected:
 
 	std::vector<Expression*> operands;

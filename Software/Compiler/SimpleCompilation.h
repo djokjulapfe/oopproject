@@ -20,15 +20,6 @@ private:
 	// elements
 	std::vector<std::pair<Text, Expression *>> opStack;
 
-	// helper methods
-	std::deque<Text> split(Text text, char delimiter);
-
-	bool isLetter(char c);
-
-	bool isNumber(char c);
-
-	bool isSymbol(char c);
-
 };
 
 

@@ -13,6 +13,8 @@ public:
 
 	Time startTime;
 
+	virtual void send() = 0;
+
 };
 
 #endif //OOPPROJECT_INTERFACES_H

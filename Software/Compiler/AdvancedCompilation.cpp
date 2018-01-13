@@ -3,26 +3,33 @@
 #include "../Expression/CompositeExpression.h"
 #include "../Expression/TokenExpression.h"
 #include "../Expression/BinaryOperationExpression.h"
+#include "../../Exceptions/NameCollisionException.h"
 
 void AdvancedCompilation::compile(Program *program) {
 	auto lines = prepareProgram(program);
 	tmpVarCount = 0;
 	lineCount = 0;
 	compiledCode = "";
+	varNames.clear();
 	for (auto &&line: lines) {
 		auto expr = parseLine(line);
 		auto outputExpression1 = expressionToString(expr);
 		compiledCode.append(renameTemporaryVariables(outputExpression1));
+		if (varNames.find(expr->getName()) == varNames.end()) {
+			varNames.insert(expr->getName());
+		} else {
+			Text msg = "There already exists a variable with the name ";
+			msg.append(expr->getName());
+			delete expr;
+			throw NameCollisionException(msg);
+		}
 		delete expr;
 	}
 	compiledCode.erase(0, 1);
 }
 
 CompositeExpression *AdvancedCompilation::parseLine(Text line) {
-	//while (!opStack.empty()) opStack.pop();
-	// TODO: this might cause a memory leak
 	opStack.clear();
-
 
 	auto tokens = Parser::parse(line);
 
@@ -37,8 +44,7 @@ CompositeExpression *AdvancedCompilation::parseLine(Text line) {
 
 	while (!tokens.empty()) {
 		// TODO: baptize this code
-		// TODO: add isAlphaNum(char c)
-		if (Parser::isNumber(tokens.back()[0]) || Parser::isLetter(tokens.back()[0])) {
+		if (Parser::isAlphaNum(tokens.back()[0])) {
 			opStack.emplace_back(tokens.back(),
 								 new TokenExpression(tokens.back()));
 		} else if (Parser::isSymbol(tokens.back()[0])) {
@@ -52,11 +58,12 @@ CompositeExpression *AdvancedCompilation::parseLine(Text line) {
 				   getPriority(opStack.back().first)) {
 				auto lOperand = opStack[opStack.size() - 2].second;
 				auto rOperand = opStack[opStack.size() - 4].second;
-				// TODO: add isComposite()
-				((CompositeExpression *) opStack[opStack.size() - 3].second)
-						->setOperand(0, lOperand);
-				((CompositeExpression *) opStack[opStack.size() - 3].second)
-						->setOperand(1, rOperand);
+				if (opStack[opStack.size() - 3].second->isComposite()) {
+					((CompositeExpression *) opStack[opStack.size() - 3].second)
+							->setOperand(0, lOperand);
+					((CompositeExpression *) opStack[opStack.size() - 3].second)
+							->setOperand(1, rOperand);
+				}
 				opStack.erase(opStack.end() - 4);
 				opStack.erase(opStack.end() - 2);
 			}
@@ -66,15 +73,15 @@ CompositeExpression *AdvancedCompilation::parseLine(Text line) {
 		tokens.pop_back();
 	}
 
-	// TODO: fix when ending with a '^'
 	while (opStack.size() > 1) {
 		auto lOperand = opStack[opStack.size() - 1].second;
 		auto rOperand = opStack[opStack.size() - 3].second;
-		// TODO: add isComposite()
-		((CompositeExpression *) opStack[opStack.size() - 2].second)
-				->setOperand(0, lOperand);
-		((CompositeExpression *) opStack[opStack.size() - 2].second)
-				->setOperand(1, rOperand);
+		if (opStack[opStack.size() - 2].second->isComposite()) {
+			((CompositeExpression *) opStack[opStack.size() - 2].second)
+					->setOperand(0, lOperand);
+			((CompositeExpression *) opStack[opStack.size() - 2].second)
+					->setOperand(1, rOperand);
+		}
 		opStack.erase(opStack.end() - 3);
 		opStack.erase(opStack.end() - 1);
 	}
@@ -106,7 +113,7 @@ std::vector<Text> AdvancedCompilation::prepareProgram(Program *program) {
 //			  [&](const std::vector<Text> &lhs, const std::vector<Text> &rhs) -> bool {
 //				  // if lhs in dep[rhs]: return false
 //				  debug_iterator++;
-//				  if (dependency[lhs[0]].find(rhs[0]) != dependency[lhs[0]].end()) return false;
+//				  if (dependency[rhs[0]].find(lhs[0]) == dependency[rhs[0]].end()) return false;
 //				  return numberOfOccurrences[lhs[0]] >= numberOfOccurrences[rhs[0]];
 //			  });
 
@@ -115,7 +122,7 @@ std::vector<Text> AdvancedCompilation::prepareProgram(Program *program) {
 			auto lhs = sortedLines[i];
 			auto rhs = sortedLines[j];
 			bool swap;
-			if (dependency[lhs[0]].find(rhs[0]) != dependency[lhs[0]].end()) swap = false;
+			if (dependency[lhs[0]].find(rhs[0]) == dependency[lhs[0]].end()) swap = false;
 			else swap = numberOfOccurrences[lhs[0]] >= numberOfOccurrences[rhs[0]];
 			if (swap) {
 				auto tmp = sortedLines[i];
@@ -127,15 +134,15 @@ std::vector<Text> AdvancedCompilation::prepareProgram(Program *program) {
 
 	std::vector<Text> ret;
 
-//	for (auto &&line : sortedLines) {
-//		Text tit;
-//		for (auto &&item : line) {
-//			tit.append(item);
+	for (auto &&line : sortedLines) {
+		Text tit;
+		for (auto &&item : line) {
+			tit.append(item);
 //			std::cout << item << " ";
-//		}
-//		ret.push_back(tit);
+		}
+		ret.push_back(tit);
 //		std::cout << std::endl;
-//	}
+	}
 
 	return ret;
 }

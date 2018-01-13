@@ -12,6 +12,8 @@ public:
 
 	void accept(ExpressionVisitor *visitor) override;
 
+	bool isComposite() override;
+
 };
 
 

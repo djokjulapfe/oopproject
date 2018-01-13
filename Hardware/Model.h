@@ -11,9 +11,6 @@ public:
 
 	static Model *Instance();
 
-	// TODO: implement this
-	//virtual void setParameters(std::string fileDir);
-
 	static Operation *operation(const Text &name);
 
 	virtual void add(Operation *operation);

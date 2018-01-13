@@ -16,7 +16,6 @@ public:
 
 	virtual void toCompleted(ITimedOperation *operation);
 
-	// TODO: removeThis
 	virtual void addOp(ITimedOperation *operation);
 
 	// Loads an imf file and creates the waiting pool

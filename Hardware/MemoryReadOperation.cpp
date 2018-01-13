@@ -6,7 +6,6 @@
 void MemoryReadOperation::process() {
 	result = std::make_shared<Token>();
 	result->setValue(inputPorts[0]->value);
-	// TODO: check if there already exists (or should the compiler do it)
 	auto value = Memory::Instance()->get(getName());
 	if (owningThread && !owningThread->ops.empty()) {
 		Event::create(owningThread->ops.front(), opTime);

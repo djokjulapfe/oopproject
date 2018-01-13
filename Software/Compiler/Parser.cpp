@@ -1,5 +1,5 @@
 #include "Parser.h"
-
+#include "../../Exceptions/BadExpressionException.h"
 
 
 bool Parser::isLetter(char c) {
@@ -24,8 +24,7 @@ std::vector<Text> Parser::parse(Text text) {
 	while (text.length() > 0) {
 		Text token;
 		if (isLetter(text[0])) {
-			while (text.length() > 0 &&
-				   (isLetter(text[0]) || isNumber(text[0]))) {
+			while (text.length() > 0 && isAlphaNum(text[0])) {
 				token.append(1, text[0]);
 				text.erase(0, 1);
 			}
@@ -40,12 +39,16 @@ std::vector<Text> Parser::parse(Text text) {
 				text.erase(0, 1);
 			}
 		} else {
-			// TODO: add exceptions here
-			std::cout << "Bad expression!\n";
-			text.erase(0, 1);
+			Text msg = "Can't parse this line:\n";
+			msg.append(text);
+			throw BadExpressionException(msg);
 		}
 		ret.push_back(token);
 	}
 
 	return ret;
+}
+
+bool Parser::isAlphaNum(char c) {
+	return isLetter(c) || isNumber(c);
 }

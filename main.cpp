@@ -13,6 +13,7 @@
 #include "Software/Compiler/Compiler.h"
 #include "Software/Compiler/SimpleCompilation.h"
 #include "Software/Compiler/AdvancedCompilation.h"
+#include "Exceptions/MemoryException.h"
 
 void initNewTest() {
 
@@ -73,23 +74,11 @@ void test1() {
 
 	initNewTest();
 
-	Operation *memwr = new MemoryWriteOperation;
-	add1 = new AddOperation;
-	add2 = new MultOperation;
-	add3 = new AddOperation;
-	Operation *add4 = new MultOperation;
-
-	memwr->setName("memwr1");
-	add1->setName("A1");
-	add2->setName("M1");
-	add3->setName("A2");
-	add4->setName("M2");
-
-	memwr->id = 73;
-	add1->id = 1;
-	add2->id = 2;
-	add3->id = 3;
-	add4->id = 4;
+	Operation *memwr = new MemoryWriteOperation("mw");
+	add1 = new AddOperation("a1");
+	add2 = new MultOperation("m1");
+	add3 = new AddOperation("a2");
+	Operation *add4 = new MultOperation("m2");
 
 	memwr->addTarget(0, add1);
 	add1->addTarget(0, add3);
@@ -261,6 +250,7 @@ void test4() {
 }
 
 void test5() {
+	initNewTest();
 	Program program;
 	program.readProgram("../programs/prilogProgram.dbp");
 	Compiler compiler(new SimpleCompilation);
@@ -274,11 +264,13 @@ void test5() {
 	Machine::Instance()->execute();
 	Machine::Instance()->printLog();
 	Memory::Instance()->printMemory();
+	std::cout << Scheduler::Instance()->getCurTime() << std::endl;
 }
 
 void test6() {
+	initNewTest();
 	Program program;
-	program.readProgram("../programs/advancedTest.dbp");
+	program.readProgram("../programs/prilogProgram.dbp");
 	Compiler compiler(new AdvancedCompilation);
 	compiler.compile(&program);
 	std::cout << std::endl;
@@ -290,11 +282,39 @@ void test6() {
 	Machine::Instance()->execute();
 	Machine::Instance()->printLog();
 	Memory::Instance()->printMemory();
+	std::cout << Scheduler::Instance()->getCurTime() << std::endl;
+}
+
+void test7() {
+	initNewTest();
+	try {
+		Memory::Instance()->get("noVar");
+		std::cout << "NO EXCEPTION??";
+	} catch (MemoryException &exception) {
+		std::cout << exception.what() << std::endl;
+	}
+}
+
+void simpleTests() {
+	std::cout << "\n------------TEST1------------\n\n";
+	test1();
+	std::cout << "\n------------TEST2------------\n\n";
+	test2();
+	std::cout << "\n------------TEST3------------\n\n";
+	test3();
+	std::cout << "\n------------TEST4------------\n\n";
+	test4();
+	std::cout << "\n------------TEST5------------\n\n";
+	test5();
+	std::cout << "\n------------TEST6------------\n\n";
+	test6();
+	std::cout << "\n------------TEST7------------\n\n";
+	test7();
 }
 
 bool isCorrect(Text correctPath) {
 	std::ifstream correct(correctPath);
-	std::stringstream calculated(Memory::Instance()->exportMemory());
+	std::stringstream calculated = Memory::Instance()->exportMemory();
 	Text corIt, calIt;
 	while (correct >> corIt && calculated >> calIt) {
 		if (corIt != calIt) return false;
@@ -324,12 +344,13 @@ bool unitTest(size_t idx, Text algorithm) {
 	Compiler compiler(strategy);
 	compiler.compile(&program);
 
+	//std::cout << compiler.getCompiledCode() << std::endl;
+
 	compiler.saveToImf();
 
 	Machine::Instance()->readProgram(program.getImfPath());
 	Machine::Instance()->execute();
 	Machine::Instance()->exportLog(program.getLogPath());
-//	Memory::Instance()->printMemory();
 
 	if (isCorrect(testDir)) {
 		std::cout << "Unit Test " << idx << " passed.\n";
@@ -339,21 +360,6 @@ bool unitTest(size_t idx, Text algorithm) {
 		return false;
 	}
 
-}
-
-void allTests() {
-	std::cout << "\n------------TEST1------------\n\n";
-	test1();
-	std::cout << "\n------------TEST2------------\n\n";
-	test2();
-	std::cout << "\n------------TEST3------------\n\n";
-	test3();
-	std::cout << "\n------------TEST4------------\n\n";
-	test4();
-	std::cout << "\n------------TEST5------------\n\n";
-	test5();
-	std::cout << "\n------------TEST6------------\n\n";
-	test6();
 }
 
 int main(int argc, char *argv[]) {
@@ -411,7 +417,7 @@ int main(int argc, char *argv[]) {
 		utStart = std::stoul(args["utstart"]);
 
 	if (args.find("utend") != args.end())
-		utStart = std::stoul(args["utend"]);
+		utEnd = std::stoul(args["utend"]);
 
 	if (args.find("alg") != args.end()) algorithm = args["alg"];
 
@@ -422,14 +428,14 @@ int main(int argc, char *argv[]) {
 		int suc = 0;
 		int num = 0;
 		for (size_t i = utStart; i < utEnd; i++) {
-			suc += unitTest(i, "advanced");
+			suc += unitTest(i, algorithm);
 			num++;
 		}
-		std::cout << "Unit tests done, " << 100 * suc / num << "% passed\n";
+		std::cout << "Unit tests done, " << 100.0 * suc / num << "% passed\n";
 
 	} else if (args.find("st") != args.end()) {
 
-		allTests();
+		simpleTests();
 
 	} else {
 
@@ -449,51 +455,6 @@ int main(int argc, char *argv[]) {
 		Memory::Instance()->printMemory();
 
 	}
-
-//	ss >> programPath >> programPath >> confPath;
-//	// TODO: add something that is not hardcoded
-//	if (programPath == "-ut" && !confPath.empty()) {
-//
-//		Text start_idx_text, end_idx_text;
-//		ss >> start_idx_text >> end_idx_text;
-//		size_t start_idx(1), end_idx(100);
-//		if (!start_idx_text.empty() && !start_idx_text.empty()) {
-//			start_idx = std::stoul(start_idx_text);
-//			end_idx = std::stoul(end_idx_text);
-//		}
-//
-//		Model::Instance()->loadConfig(confPath);
-//
-//		int suc = 0;
-//		int num = 0;
-//		for (size_t i = start_idx; i < end_idx; i++) {
-//			suc += unitTest(i, "advanced");
-//			num++;
-//		}
-//		std::cout << "Unit tests done, " << 100 * suc / num << "% passed\n";
-//
-//	} else if (!programPath.empty() && !confPath.empty()) {
-//
-//		Model::Instance()->loadConfig(confPath);
-//
-//		Program program;
-//		program.readProgram("../programs/prilogProgram.dbp");
-//
-//		Compiler compiler(new SimpleCompilation);
-//		compiler.compile(&program);
-//
-//		compiler.saveToImf();
-//
-//		Machine::Instance()->readProgram(program.getImfPath());
-//		Machine::Instance()->execute();
-//		Machine::Instance()->exportLog(program.getLogPath());
-//		Memory::Instance()->printMemory();
-//
-//	} else {
-//
-//		allTests();
-//
-//	}
 
 	return 0;
 }

@@ -15,8 +15,6 @@ protected:
 
 	explicit MemoryOperation(Text name = "Memory Operation");
 
-	// TODO: add MemoryReadOperation
-
 };
 
 

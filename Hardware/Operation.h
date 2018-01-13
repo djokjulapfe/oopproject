@@ -30,9 +30,6 @@ public:
 
 	virtual void addTarget(size_t idx, Operation *operation);
 
-	// TODO: implement this
-	//virtual void removeTarget(Operation *operation);
-
 	virtual void acceptToken(size_t idx, std::shared_ptr<Token> token);
 
 	virtual bool allTokensAccepted();
@@ -41,7 +38,6 @@ public:
 
 protected:
 
-	// TODO: add operation ID to ctor
 	explicit Operation(size_t inputPortSize, Text name = "Unnamed Operation");
 
 	std::vector<std::shared_ptr<Token>> inputPorts;
@@ -53,10 +49,6 @@ protected:
 
 
 private:
-
-	static ID maxId;
-
-	ID id;
 
 	Text name;
 

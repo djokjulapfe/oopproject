@@ -1,5 +1,6 @@
 #include "Model.h"
-#include <algorithm>
+#include "../Exceptions/BadConfigFileException.h"
+#include "../Exceptions/NameCollisionException.h"
 
 Model::~Model() {
 	for (auto &&operation : operations) {
@@ -23,6 +24,15 @@ Model::Model() {
 }
 
 void Model::add(Operation *operation) {
+	for (auto &&item : operations) {
+		if (item->getName() == operation->getName()) {
+			Text msg = "Operation with the name ";
+			msg.append(operation->getName());
+			msg.append(" already exists in the Model");
+			Model::clear();
+			throw NameCollisionException(msg);
+		}
+	}
 	operations.push_back(operation);
 }
 
@@ -42,7 +52,6 @@ void Model::clear() {
 }
 
 Operation *Model::findByName(const Text &name) {
-	// TODO: check if multiple ops with same name
 	for (auto &&operation : operations) {
 		if (operation->getName() == name) {
 			return operation;
@@ -62,15 +71,15 @@ void Model::loadConfig(Text confPath) {
 	if (conf.is_open()) {
 		while (std::getline(conf, line)) {
 			auto begin = line.find('=') + 1;
-//			std::cout << line << std::endl;
-//			std::cout << begin << " - " << line.length() << std::endl;
-//			std::cout << line.substr(begin, line.length()) << std::endl;
 			vals.push_back(std::stoul(line.substr(begin, line.length())));
 		}
 	}
 	conf.close();
 	if (vals.size() != 7) {
-		return; // TODO: throw exception?
+		Text msg = "Config file has ";
+		msg.append(std::to_string(vals.size()));
+		msg.append(" parameters, in stead of 7.");
+		throw BadConfigFileException(msg);
 	} else {
 		// TODO: remove dependency on configuration order
 		Ts = vals[0];
@@ -82,4 +91,3 @@ void Model::loadConfig(Text confPath) {
 		Nw = vals[6];
 	}
 }
-

@@ -28,8 +28,6 @@ public:
 
 	virtual void addWriter(MemoryOperation *op);
 
-	// TODO: implement similar functions for reading
-
 	virtual Time readFreeIn();
 
 	virtual void addReader(MemoryOperation *op);

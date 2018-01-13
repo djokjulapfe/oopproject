@@ -6,7 +6,6 @@
 void MemoryWriteOperation::process() {
 	result = std::make_shared<Token>();
 	result->setValue(inputPorts[0]->value);
-	// TODO: check if there already exists (or should the compiler do it)
 	Memory::Instance()->set(getName(), result->value);
 	if (owningThread && !owningThread->ops.empty()) {
 		Event::create(owningThread->ops.front(), Model::Instance()->Mw);
