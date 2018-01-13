@@ -117,9 +117,9 @@ void Machine::printLog() {
 	}
 }
 
-void Machine::exportLog(Text logDir) {
+void Machine::exportLog(Text logPath) {
 
-	std::ofstream logger(logDir);
+	std::ofstream logger(logPath);
 
 	for (auto &&item : logs) {
 		logger << item.label << ":\t"

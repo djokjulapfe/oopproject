@@ -6,6 +6,12 @@
 
 class AddOperation : public ArithmeticOperation {
 
+	/**
+	 * @brief Concrete implementation of an addition.
+	 *
+	 * result.value = inputPorts[0].value + inputPorts[1].value
+	 */
+
 public:
 
 	void process() override;

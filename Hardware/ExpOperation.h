@@ -6,6 +6,12 @@
 
 class ExpOperation : public ArithmeticOperation {
 
+	/**
+	 * @brief Concrete implementation of an exponentiaiton.
+	 *
+	 * result.value = inputPorts[0].value ^ inputPorts[1].value
+	 */
+
 public:
 
 	void process() override;

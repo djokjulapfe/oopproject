@@ -1,6 +1,10 @@
 #ifndef OOPPROJECT_HARDWARE_H
 #define OOPPROJECT_HARDWARE_H
 
+/**
+ * @brief includes everything for convenience
+ */
+
 #include "AddOperation.h"
 #include "ArithmeticOperation.h"
 #include "ExpOperation.h"

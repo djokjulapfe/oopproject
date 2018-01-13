@@ -22,6 +22,3 @@ const Text &Token::getName() const {
 	return name;
 }
 
-void Token::setName(const Text &name) {
-	Token::name = name;
-}

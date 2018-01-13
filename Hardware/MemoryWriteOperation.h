@@ -6,6 +6,13 @@
 
 class MemoryWriteOperation : public MemoryOperation {
 
+	/**
+	 * @brief Writes a value to memory.
+	 *
+	 * result.value = inputPort[0].value
+	 * memory[name] = inputPort[0].value
+	 */
+
 public:
 
 	void process() override;

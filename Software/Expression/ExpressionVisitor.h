@@ -6,6 +6,10 @@
 
 class ExpressionVisitor {
 
+	/**
+	 * @brief Visitor design pattern.
+	 */
+
 public:
 
 	virtual void visitToken(TokenExpression *tokenExpression) = 0;

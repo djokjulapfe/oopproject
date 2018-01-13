@@ -6,6 +6,12 @@
 
 class MultOperation : public ArithmeticOperation {
 
+	/**
+	 * @brief Concrete implementation of a multiplication.
+	 *
+	 * result.value = inputPorts[0].value * inputPorts[1].value
+	 */
+
 public:
 
 	void process() override;

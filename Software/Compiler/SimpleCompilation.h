@@ -6,6 +6,11 @@
 
 class SimpleCompilation : public ICompilationStrategy {
 
+	/**
+	 * @brief Simple compilation algorithm that reads the string character by
+	 * character and creates an straightforward expression tree
+	 */
+
 public:
 
 	void compile(Program *program) override;
@@ -16,8 +21,7 @@ protected:
 
 private:
 
-	// can't use std::stack since it doesn't allow access of multiple top
-	// elements
+	// Used for creating the expression tree in the operation stack
 	std::vector<std::pair<Text, Expression *>> opStack;
 
 };

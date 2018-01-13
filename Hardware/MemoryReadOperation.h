@@ -6,6 +6,12 @@
 
 class MemoryReadOperation : public MemoryOperation {
 
+	/**
+	 * @brief Reads a variable from memory.
+	 *
+	 * result.value = memory[inputPort[0].name]
+	 */
+
 public:
 
 	void process() override;

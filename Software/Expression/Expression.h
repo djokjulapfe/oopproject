@@ -8,20 +8,40 @@ class CompositeExpression;
 
 class Expression {
 
+	/**
+	 * @brief Realizes an expression for compiling code.
+	 */
+
 public:
 
-	Expression(const Text &name);
+	/**
+	 * @brief default constructor
+	 * @param name of the expression
+	 */
+	explicit Expression(const Text &name);
 
-	virtual ~Expression();
+	/**
+	 * @brief Virtualisation of the destructor for use in subclasses
+	 */
+	virtual ~Expression() = default;
 
+	/**
+	 * @brief Accept methot of the Visitor design pattern
+	 * @param visitor
+	 */
 	virtual void accept(ExpressionVisitor *visitor) = 0;
 
 	const Text &getName() const;
 
+	/**
+	 * @brief Used in polymorphism when checking Expression type
+	 * @return true if this is an instance of CompositeExpression
+	 */
 	virtual bool isComposite() = 0;
 
 protected:
 
+	// Name of the expressino
 	Text name;
 
 };

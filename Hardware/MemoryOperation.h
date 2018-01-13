@@ -7,6 +7,10 @@
 
 class MemoryOperation : public Operation {
 
+	/**
+	 * @brief Intermediary class for operation that use memory
+	 */
+
 public:
 
 	Memory::Thread *owningThread;

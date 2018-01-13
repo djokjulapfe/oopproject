@@ -4,13 +4,16 @@
 #include "../Visitor/Visitor.h"
 
 void MemoryReadOperation::process() {
+
 	result = std::make_shared<Token>();
-	result->setValue(inputPorts[0]->value);
-	auto value = Memory::Instance()->get(getName());
+
+	result->setValue(Memory::Instance()->get(getName()));
+
 	if (owningThread && !owningThread->ops.empty()) {
 		Event::create(owningThread->ops.front(), opTime);
 		owningThread->ops.pop();
 	}
+
 }
 
 void MemoryReadOperation::accept(Visitor *visitor) {

@@ -10,10 +10,6 @@ const Text &Operation::getName() const {
 	return name;
 }
 
-void Operation::setName(const Text &name) {
-	Operation::name = name;
-}
-
 const Text &Operation::getDescription() const {
 	return description;
 }

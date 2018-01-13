@@ -7,6 +7,10 @@
 
 class ArithmeticOperation : public Operation {
 
+	/**
+	 * @brief Intermediary class for operations with two input values
+	 */
+
 protected:
 
 	ArithmeticOperation(Text name = "Arithmetic Operation");
