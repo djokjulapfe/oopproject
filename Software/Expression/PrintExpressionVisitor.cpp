@@ -8,10 +8,14 @@ void PrintExpressionVisitor::visitToken(TokenExpression *tokenExpression) {
 
 void PrintExpressionVisitor::visitComposite(
 		CompositeExpression *compositeExpression) {
+
+	// check if an expression is passed
 	if (compositeExpression == nullptr) {
 		Text msg = "nullptr passed to visitComposite";
 		throw VisitorException(msg);
 	}
+
+	// visit all of the expression's operands
 	for (auto &&operand : compositeExpression->getOperands()) {
 		if (operand != nullptr) {
 			operand->accept(this);
@@ -22,6 +26,8 @@ void PrintExpressionVisitor::visitComposite(
 			throw VisitorException(msg);
 		}
 	}
+
+	// output the expression
 	output.append("\n");
 	output.append(compositeExpression->getOperationType());
 	output.append(" ");
@@ -31,6 +37,7 @@ void PrintExpressionVisitor::visitComposite(
 		output.append(operand->getName());
 		output.append(" ");
 	}
+
 }
 
 const Text &PrintExpressionVisitor::getOutput() const {

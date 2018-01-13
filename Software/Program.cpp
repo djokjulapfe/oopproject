@@ -9,6 +9,7 @@ void Program::readProgram(Text programPath) {
 	path = programPath;
 	pointer = 0;
 
+	// find paths for log and imf files
 	imfPath = path;
 	size_t it = imfPath.length() - 1;
 	while (imfPath[it] != '.') {
@@ -19,6 +20,7 @@ void Program::readProgram(Text programPath) {
 	logPath.append("log");
 	imfPath.append("imf");
 
+	// finds the name of the profram
 	size_t programNameStart = programPath.length();
 	while (programNameStart >= 0 && programPath[programNameStart] != '/') {
 		programNameStart--;
@@ -31,24 +33,37 @@ void Program::readProgram(Text programPath) {
 	name = programPath.substr(programNameStart,
 							  programNameEnd - programNameStart);
 
+	// reads the program and stores it to a list of strings
 	std::ifstream programFile(programPath);
 	std::string line;
+
 	if (programFile.is_open()) {
 		for (int i = 0; !programFile.eof(); i++) {
+
+			// reads one line
 			std::getline(programFile, line);
+
+			// checks if the line is a comment (denoted by a #)
 			if (line[0] == '#') continue;
+
+			// adds the line to the list
 			lines.push_back(line);
+
 		}
 		programFile.close();
 	} else {
+		// TODO: throw exception
 		std::cout << "Error opening " << programPath << std::endl;
 	}
 }
 
 bool Program::nextCommand(Text &command) {
 	if (!lines.empty() && pointer < lines.size()) {
+
+		// update the argument and the line pointer
 		command = lines[pointer++];
 		return true;
+
 	} else return false;
 }
 
@@ -69,7 +84,7 @@ const Text &Program::getLogPath() const {
 }
 
 void Program::seek(size_t line) {
-	if (line < lines.size()) {
+	if (line >= 0 && line < lines.size()) {
 		pointer = line;
 	}
 }
